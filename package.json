@@ -1,0 +1,46 @@
+{
+  "name": "working-assistant",
+  "version": "0.1.0",
+  "description": "Working Assistant",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:HappyTuesday/working-assistant.git"
+  },
+  "keywords": [
+    "spring",
+    "data",
+    "react"
+  ],
+  "author": "Nick Liu",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://HappyTuesday.github.com/working-assistant/issues"
+  },
+  "homepage": "https://HappyTuesday.github.com/working-assistant",
+  "dependencies": {
+    "@types/node": "^12.6.8",
+    "antd": "^3.20.2",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-redux": "^7.1.0",
+    "react-router": "^5.0.1",
+    "react-router-dom": "^5.0.1",
+    "redux": "^4.0.4",
+    "dateformat": "^3.0.3"
+  },
+  "scripts": {
+    "build": "webpack",
+    "watch": "webpack --watch -d"
+  },
+  "devDependencies": {
+    "css-loader": "^3.0.0",
+    "less": "^3.9.0",
+    "less-loader": "^5.0.0",
+    "style-loader": "^0.23.1",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.3",
+    "typings-for-css-modules-loader": "^1.7.0",
+    "webpack": "^4.19.1",
+    "webpack-cli": "^3.1.0"
+  }
+}
