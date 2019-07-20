@@ -4,7 +4,7 @@ import com.nick.working.assistant.supplier.develop.dto.UserDTO;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface UserRepository extends PagingAndSortingRepository<UserDTO, Integer> {
-    UserDTO findUserByUsername(String username);
+    UserDTO findUserByName(String name);
 
-    boolean existsByUsername(String username);
+    boolean existsByName(String name);
 }

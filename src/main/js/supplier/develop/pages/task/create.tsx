@@ -2,20 +2,27 @@ import React from 'react'
 import { Link } from "react-router-dom";
 import { notification } from "antd";
 import {request} from "../../../../request";
+import { connect } from "react-redux";
 
 import {
     Form,
     Input,
     Button,
 } from 'antd';
+import {UserSelect} from "../user";
 
+@connect(
+    state => ({
+        loginAccount: state.accounts.loginAccount
+    })
+)
 class CreateForm extends React.Component<any> {
 
     handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                this.createTask(values);
+                this.createTask({...values, owner: {name: values.owner.value || this.props.loginAccount.name}});
             }
         });
     };
@@ -59,19 +66,22 @@ class CreateForm extends React.Component<any> {
             },
         };
 
+        let {loginAccount} = this.props;
+
         return (
             <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-                <Form.Item label="owner">
+                <Form.Item label="任务负责人">
                     {getFieldDecorator('owner', {
+                        initialValue: loginAccount.manager ? "" : loginAccount.name,
                         rules: [
                             {
                                 required: true,
                                 message: 'Please input the owner!',
                             },
                         ],
-                    })(<Input />)}
+                    })(loginAccount.manager ? <UserSelect/> : <Input readOnly={true}/>)}
                 </Form.Item>
-                <Form.Item label="company">
+                <Form.Item label="供应商">
                     {getFieldDecorator('company', {
                         rules: [
                             {
@@ -81,7 +91,7 @@ class CreateForm extends React.Component<any> {
                         ],
                     })(<Input />)}
                 </Form.Item>
-                <Form.Item label="type">
+                <Form.Item label="任务类型">
                     {getFieldDecorator('type', {
                         rules: [
                             {
@@ -91,7 +101,7 @@ class CreateForm extends React.Component<any> {
                         ],
                     })(<Input />)}
                 </Form.Item>
-                <Form.Item label="subtype">
+                <Form.Item label="任务自类型">
                     {getFieldDecorator('subtype', {
                         rules: [
                             {
@@ -101,7 +111,7 @@ class CreateForm extends React.Component<any> {
                         ],
                     })(<Input />)}
                 </Form.Item>
-                <Form.Item label="desc">
+                <Form.Item label="任务描述">
                     {getFieldDecorator('desc', {
                         rules: [
                             {
@@ -113,7 +123,7 @@ class CreateForm extends React.Component<any> {
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit">
-                        Create
+                        创建
                     </Button>
                 </Form.Item>
             </Form>
@@ -127,7 +137,7 @@ export class CreateTaskPage extends React.Component {
     render() {
         return (
             <div>
-                <h2>Create Task</h2>
+                <h2>创建任务</h2>
                 <WrappedCreateForm/>
             </div>
         )

@@ -98,18 +98,12 @@ class EditForm extends React.Component<EditFormProps & {history}, any> {
 
         return (
             <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-                <Form.Item label="User Name">
-                    {getFieldDecorator('username', {
-                        initialValue: user.username,
-                        rules: [
-                            {
-                                required: true,
-                                message: 'Please input the username!',
-                            },
-                        ],
-                    })(<Input />)}
+                <Form.Item label="用户名">
+                    {getFieldDecorator('name', {
+                        initialValue: user.name
+                    })(<Input readOnly={true}/>)}
                 </Form.Item>
-                <Form.Item label="Password">
+                <Form.Item label="登录密码">
                     {getFieldDecorator('password', {
                         initialValue: user.password,
                         rules: [
@@ -120,14 +114,14 @@ class EditForm extends React.Component<EditFormProps & {history}, any> {
                         ],
                     })(<Input type="password" />)}
                 </Form.Item>
-                <Form.Item label="manager">
+                <Form.Item label="是否为管理员">
                     {getFieldDecorator('manager', {
                         initialValue: user.manager
                     })(<Input type="checkbox" />)}
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit">
-                        Save
+                        保存
                     </Button>
                 </Form.Item>
             </Form>
@@ -136,7 +130,7 @@ class EditForm extends React.Component<EditFormProps & {history}, any> {
 
     render() {
         return (
-            <Skeleton active={true} loading={this.state.loading}>
+            <Skeleton loading={this.state.loading}>
                 {this.renderForm()}
             </Skeleton>
         )
@@ -149,7 +143,7 @@ export class EditUserPage extends React.Component<{match}> {
     render() {
         return (
             <div>
-                <h2>Edit User</h2>
+                <h2>编辑用户</h2>
                 <WrappedEditForm userId={this.props.match.params.userId}/>
             </div>
         )

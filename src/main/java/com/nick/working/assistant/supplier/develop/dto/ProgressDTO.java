@@ -2,9 +2,7 @@ package com.nick.working.assistant.supplier.develop.dto;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Data
@@ -14,8 +12,10 @@ public class ProgressDTO {
     @GeneratedValue
     private int id;
     private int taskId;
+    @ManyToOne
+    @JoinColumn
+    private UserDTO author;
     private String content;
     private String comment;
-    private String author;
     private Date timestamp;
 }

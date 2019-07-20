@@ -61,17 +61,17 @@ class CreateForm extends React.Component<any> {
 
         return (
             <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-                <Form.Item label="User Name">
-                    {getFieldDecorator('username', {
+                <Form.Item label="用户名">
+                    {getFieldDecorator('name', {
                         rules: [
                             {
                                 required: true,
-                                message: 'Please input the username!',
+                                message: 'Please input the name!',
                             },
                         ],
                     })(<Input />)}
                 </Form.Item>
-                <Form.Item label="Password">
+                <Form.Item label="登录密码">
                     {getFieldDecorator('password', {
                         rules: [
                             {
@@ -81,14 +81,14 @@ class CreateForm extends React.Component<any> {
                         ],
                     })(<Input type="password" />)}
                 </Form.Item>
-                <Form.Item label="Is Manager">
+                <Form.Item label="是否为管理员">
                     {getFieldDecorator('manager', {
                         initialValue: false,
                     })(<Input type="checkbox" />)}
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit">
-                        Create
+                        创建
                     </Button>
                 </Form.Item>
             </Form>
@@ -102,7 +102,7 @@ export class CreateUserPage extends React.Component {
     render() {
         return (
             <div>
-                <h2>Create User</h2>
+                <h2>创建用户</h2>
                 <WrappedCreateForm/>
             </div>
         )

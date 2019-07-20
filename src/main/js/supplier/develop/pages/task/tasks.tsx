@@ -24,8 +24,8 @@ class TaskList extends React.Component<{loginAccount?}> {
     }
 
     fetchTasks() {
-        let {loginAccount: {username}} = this.props;
-        let params = ["owner=" + username];
+        let {loginAccount: {name}} = this.props;
+        let params = ["owner=" + name];
         if (!this.state.includingFinishedTasks) {
             params.push("done=false")
         }
@@ -42,7 +42,7 @@ class TaskList extends React.Component<{loginAccount?}> {
 
     columns = [
         {
-            title: "Name",
+            title: "任务编号",
             dataIndex: 'id',
             key: 'id',
             render: id => (
@@ -54,59 +54,58 @@ class TaskList extends React.Component<{loginAccount?}> {
             )
         },
         {
-            title: 'company',
+            title: '供应商',
             dataIndex: 'company',
             key: 'company'
         }, {
-            title: 'type',
+            title: '任务类型',
             dataIndex: 'type',
             key: 'type'
         }, {
-            title: 'subtype',
+            title: '任务自类型',
             dataIndex: 'subtype',
             key: 'subtype'
         }, {
-            title: 'desc',
+            title: '任务描述',
             dataIndex: 'desc',
             key: 'desc'
         }, {
-            title: 'yesterday status',
+            title: '昨日进度',
             dataIndex: 'statusOfYesterday',
             key: 'statusOfYesterday',
             render: p => p && <ProgressLabel progress={p}/>
         }, {
-            title: 'current status',
+            title: '当前进度',
             dataIndex: 'statusOfToday',
             key: 'statusOfToday',
             render: p => p && <ProgressLabel progress={p}/>
         }
     ];
 
-    toggleIncludingFinishedTasks = () => {
+    toggleIncludingFinishedTasks = checked => {
         this.setState({
             loading: true,
-            includingFinishedTasks: !this.state.includingFinishedTasks
-        });
-        this.fetchTasks();
+            includingFinishedTasks: checked
+        }, () => this.fetchTasks());
     };
 
     render() {
         return (
             <div>
-                <h2>Tasks</h2>
+                <h2>我的任务列表</h2>
                 <div>
                     <Link to="/supplier/develop/tasks/create">
                         <Button type="primary" style={{ marginBottom: 16 }}>
-                            Create
+                            添加新任务
                         </Button>
                     </Link>
-                    <span>
-                        Including finished tasks
+                    <label style={{marginLeft: "1em"}}>
                         <Switch
                             defaultChecked={this.state.includingFinishedTasks}
                             onChange={this.toggleIncludingFinishedTasks}
                         />
-                    </span>
+                        包含已完成任务
+                    </label>
                 </div>
                 <Table
                     loading={!this.state.tasks || this.state.loading}

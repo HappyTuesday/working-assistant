@@ -11,7 +11,7 @@ public class Progress {
     private int taskId;
     private String content;
     private String comment;
-    private String author;
+    private User author;
     private Date timestamp;
 
     public Progress() {}
@@ -21,18 +21,7 @@ public class Progress {
         this.taskId = dto.getTaskId();
         this.content = dto.getContent();
         this.comment = dto.getComment();
-        this.author = dto.getAuthor();
+        this.author = new User(dto.getAuthor());
         this.timestamp = dto.getTimestamp();
-    }
-
-    public ProgressDTO toDTO() {
-        ProgressDTO dto = new ProgressDTO();
-        dto.setId(id);
-        dto.setTaskId(taskId);
-        dto.setContent(content);
-        dto.setComment(comment);
-        dto.setAuthor(author);
-        dto.setTimestamp(timestamp);
-        return dto;
     }
 }

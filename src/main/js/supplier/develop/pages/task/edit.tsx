@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
 import {notification, Skeleton} from "antd";
 import {request} from "../../../../request";
+import { connect } from "react-redux";
 
 import {
     Form,
@@ -10,18 +11,23 @@ import {
     Button,
 } from 'antd';
 import {FormComponentProps} from "antd/lib/form";
+import {UserSelect} from "../user";
 
 interface EditFormProps extends FormComponentProps {
     taskId: number;
     updateTask?: any;
 }
 
+@connect(
+    state => ({
+        loginAccount: state.accounts.loginAccount
+    })
+)
 @withRouter
-class EditForm extends React.Component<EditFormProps & {history}, any> {
+class EditForm extends React.Component<EditFormProps & {history, loginAccount}, any> {
 
     state = {
-        loading: true,
-        task: {} as any
+        task: null
     };
 
     componentDidMount(): void {
@@ -33,7 +39,6 @@ class EditForm extends React.Component<EditFormProps & {history}, any> {
             url: "/api/supplier/develop/tasks/" + id
         }, task => {
             this.setState({
-                loading: false,
                 task: task
             })
         })
@@ -50,21 +55,30 @@ class EditForm extends React.Component<EditFormProps & {history}, any> {
                 description: "Task has been updated!"
             });
 
-            this.props.history.push("/supplier/develop/tasks");
+            let {loginAccount} = this.props;
+            if (loginAccount.manager) {
+                this.props.history.push("/supplier/develop/tasks/manage");
+            } else {
+                this.props.history.push("/supplier/develop/tasks/list");
+            }
         });
     }
 
     handleSubmit = e => {
         e.preventDefault();
 
-        let {loading, task} = this.state;
-        if (loading) {
+        let {task} = this.state;
+        if (!task) {
             return;
         }
 
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                this.updateTask({...task, ...values});
+                this.updateTask({
+                    ...values,
+                    id: task.id,
+                    owner: {name: values.owner.value || task.owner.name}
+                });
             }
         });
     };
@@ -98,18 +112,18 @@ class EditForm extends React.Component<EditFormProps & {history}, any> {
 
         return (
             <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-                <Form.Item label="owner">
+                <Form.Item label="责任人">
                     {getFieldDecorator('owner', {
-                        initialValue: task.owner,
+                        initialValue: task.owner.name,
                         rules: [
                             {
                                 required: true,
-                                message: 'Please input the owner!',
+                                message: 'Please input the owner Name!',
                             },
                         ],
-                    })(<Input />)}
+                    })(<UserSelect/>)}
                 </Form.Item>
-                <Form.Item label="company">
+                <Form.Item label="供应商">
                     {getFieldDecorator('company', {
                         initialValue: task.company,
                         rules: [
@@ -120,7 +134,7 @@ class EditForm extends React.Component<EditFormProps & {history}, any> {
                         ],
                     })(<Input />)}
                 </Form.Item>
-                <Form.Item label="type">
+                <Form.Item label="任务类型">
                     {getFieldDecorator('type', {
                         initialValue: task.type,
                         rules: [
@@ -131,7 +145,7 @@ class EditForm extends React.Component<EditFormProps & {history}, any> {
                         ],
                     })(<Input />)}
                 </Form.Item>
-                <Form.Item label="subtype">
+                <Form.Item label="任务自类型">
                     {getFieldDecorator('subtype', {
                         initialValue: task.subtype,
                         rules: [
@@ -142,7 +156,7 @@ class EditForm extends React.Component<EditFormProps & {history}, any> {
                         ],
                     })(<Input />)}
                 </Form.Item>
-                <Form.Item label="desc">
+                <Form.Item label="任务描述">
                     {getFieldDecorator('desc', {
                         initialValue: task.desc,
                         rules: [
@@ -155,7 +169,7 @@ class EditForm extends React.Component<EditFormProps & {history}, any> {
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit">
-                        Save
+                        保存
                     </Button>
                 </Form.Item>
             </Form>
@@ -164,8 +178,8 @@ class EditForm extends React.Component<EditFormProps & {history}, any> {
 
     render() {
         return (
-            <Skeleton active={true} loading={this.state.loading}>
-                {this.renderForm()}
+            <Skeleton loading={!this.state.task}>
+                {this.state.task && this.renderForm()}
             </Skeleton>
         )
     }
@@ -175,10 +189,11 @@ const WrappedEditForm = Form.create<EditFormProps>({})(EditForm);
 
 export class EditTaskPage extends React.Component<{match}> {
     render() {
+        let taskId = this.props.match.params.taskId;
         return (
             <div>
-                <h2>Edit Task</h2>
-                <WrappedEditForm taskId={this.props.match.params.taskId}/>
+                <h2>编辑任务 #{taskId}</h2>
+                <WrappedEditForm taskId={taskId}/>
             </div>
         )
     }

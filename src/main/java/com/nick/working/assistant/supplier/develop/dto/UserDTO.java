@@ -15,7 +15,7 @@ public class UserDTO {
     private int id;
 
     @Column(unique = true, nullable = false)
-    private String username;
+    private String name;
     @Column(nullable = false)
     private String password;
     private boolean manager;

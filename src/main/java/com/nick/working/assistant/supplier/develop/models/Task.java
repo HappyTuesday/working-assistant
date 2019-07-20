@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class Task {
     private int id;
-    private String owner;
+    private User owner;
     private String company;
     private String type;
     private String subtype;
@@ -24,7 +24,7 @@ public class Task {
 
     public Task(TaskDTO dto, List<ProgressDTO> progresses) {
         this.id = dto.getId();
-        this.owner = dto.getOwner();
+        this.owner = new User(dto.getOwner());
         this.company = dto.getCompany();
         this.type = dto.getType();
         this.subtype = dto.getSubtype();
@@ -57,7 +57,9 @@ public class Task {
     public TaskDTO toDTO() {
         TaskDTO dto = new TaskDTO();
         dto.setId(id);
-        dto.setOwner(owner);
+        if (owner != null) {
+            dto.setOwner(owner.toDTO());
+        }
         dto.setCompany(company);
         dto.setType(type);
         dto.setSubtype(subtype);

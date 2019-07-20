@@ -32,14 +32,20 @@ public class DataProvider implements CommandLineRunner {
     @Override
     public void run(String... args) {
         UserDTO u = new UserDTO();
-        u.setUsername("nick");
+        u.setName("nick");
         u.setPassword("nick");
         u.setManager(true);
         this.userRepository.save(u);
 
+        UserDTO u2 = new UserDTO();
+        u2.setName("hh");
+        u2.setPassword("hh");
+        u2.setManager(false);
+        this.userRepository.save(u2);
+
         TaskDTO t = new TaskDTO();
         t.setId(1);
-        t.setOwner("nick");
+        t.setOwner(u);
         t.setCompany("google");
         t.setType("buy");
         t.setSubtype("buy-computer");
@@ -51,7 +57,7 @@ public class DataProvider implements CommandLineRunner {
         p.setTaskId(2);
         p.setComment("payed");
         p.setContent("payed");
-        p.setAuthor("nick");
+        p.setAuthor(u);
         p.setTimestamp(new Date());
         this.progressRepository.save(p);
     }

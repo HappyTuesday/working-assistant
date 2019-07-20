@@ -7,7 +7,7 @@ import lombok.Data;
 public class User {
     private int id;
 
-    private String username;
+    private String name;
     private String password;
     private boolean manager;
 
@@ -15,15 +15,15 @@ public class User {
 
     public User(UserDTO dto) {
         this.id = dto.getId();
-        this.username = dto.getUsername();
-        this.password = dto.getPassword();
+        this.name = dto.getName();
+        this.password = "******";
         this.manager = dto.isManager();
     }
 
     public UserDTO toDTO() {
         UserDTO dto = new UserDTO();
         dto.setId(id);
-        dto.setUsername(username);
+        dto.setName(name);
         dto.setPassword(password);
         dto.setManager(manager);
         return dto;

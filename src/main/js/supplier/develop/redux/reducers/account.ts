@@ -7,6 +7,9 @@ let loginAccount;
 if (loginAccountJson) {
     try {
         loginAccount = JSON.parse(loginAccountJson);
+        if (!loginAccount.name) {
+            loginAccount = null; // remove illegal cache
+        }
     } catch (e) {
         console.warn("invalid login account info " + loginAccountJson);
     }

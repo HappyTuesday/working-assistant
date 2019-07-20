@@ -2,11 +2,13 @@ package com.nick.working.assistant.supplier.develop.controllers;
 
 import com.nick.working.assistant.supplier.develop.dto.ProgressDTO;
 import com.nick.working.assistant.supplier.develop.dto.TaskDTO;
+import com.nick.working.assistant.supplier.develop.dto.UserDTO;
 import com.nick.working.assistant.supplier.develop.models.Progress;
 import com.nick.working.assistant.supplier.develop.models.Task;
 import com.nick.working.assistant.supplier.develop.models.TaskDetail;
 import com.nick.working.assistant.supplier.develop.repositories.ProgressRepository;
 import com.nick.working.assistant.supplier.develop.repositories.TaskRepository;
+import com.nick.working.assistant.supplier.develop.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,22 +24,26 @@ import java.util.Optional;
 public class TaskController {
     private final TaskRepository repository;
     private final ProgressRepository progressRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public TaskController(TaskRepository repository, ProgressRepository progressRepository) {
+    public TaskController(TaskRepository repository,
+                          ProgressRepository progressRepository,
+                          UserRepository userRepository) {
         this.repository = repository;
         this.progressRepository = progressRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
     public List<Task> findAll(Boolean done, String owner) {
         Iterable<TaskDTO> iterable;
         if (done != null && owner != null) {
-            iterable = repository.findAllByOwnerAndDone(owner, done);
+            iterable = repository.findAllByOwnerNameAndDone(owner, done);
         } else if (done != null) {
             iterable = repository.findAllByDone(done);
         } else if (owner != null) {
-            iterable = repository.findAllByOwner(owner);
+            iterable = repository.findAllByOwnerName(owner);
         } else {
             iterable = repository.findAll();
         }
@@ -75,28 +81,63 @@ public class TaskController {
         }
     }
 
+    private UserDTO getUserDTO(String name) {
+        UserDTO userDTO = userRepository.findUserByName(name);
+        if (userDTO == null) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+        }
+        return userDTO;
+    }
+
     @PutMapping
     public int add(Task task) {
-        return repository.save(task.toDTO()).getId();
+        if (task.getOwner() == null || task.getOwner().getName() == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        }
+
+        TaskDTO dto = task.toDTO();
+        dto.setOwner(getUserDTO(task.getOwner().getName()));
+
+        return repository.save(dto).getId();
     }
 
     @PostMapping
     public void update(Task task) {
-        repository.save(task.toDTO());
+        if (task.getOwner() == null || task.getOwner().getName() == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<TaskDTO> optionalTaskDTO = repository.findById(task.getId());
+        if (!optionalTaskDTO.isPresent()) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+        }
+        TaskDTO dto = optionalTaskDTO.get();
+        dto.setCompany(task.getCompany());
+        dto.setType(task.getType());
+        dto.setSubtype(task.getSubtype());
+        dto.setDesc(task.getDesc());
+        dto.setDone(task.isDone());
+        dto.setOwner(getUserDTO(task.getOwner().getName()));
+        repository.save(dto);
     }
 
     @PutMapping("progress/{taskId}")
     public void updateProcess(@PathVariable int taskId, String content, String comment, String author) {
         Optional<TaskDTO> result = repository.findById(taskId);
         if (result.isPresent()) {
-            if (result.get().isDone()) {
+            TaskDTO task = result.get();
+            if (task.isDone()) {
                 throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "task already done");
             }
             ProgressDTO progress = new ProgressDTO();
             progress.setTaskId(taskId);
             progress.setContent(content);
             progress.setComment(comment);
-            progress.setAuthor(author);
+            UserDTO userDTO = userRepository.findUserByName(author);
+            if (userDTO == null) {
+                throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+            }
+            progress.setAuthor(userDTO);
             progress.setTimestamp(new Date());
             progressRepository.save(progress);
         } else {

@@ -1,11 +1,19 @@
 import React from 'react'
 import { Link } from "react-router-dom";
-import {Table, Button, Popconfirm, Divider, Switch} from "antd";
+import {Table, Button, Popconfirm, Divider, Switch, Icon} from "antd";
 import {request} from "../../../../request";
 import {TaskDetailDrawerLink} from "./detail";
 import {ProgressLabel} from "./progress";
+import { connect } from "react-redux";
+import { withRouter } from "react-router";
 
-class TaskManageList extends React.Component {
+@connect(
+    state => ({
+        loginAccount: state.accounts.loginAccount
+    })
+)
+@withRouter
+class TaskManageList extends React.Component<{loginAccount?, history?}> {
 
     state = {
         tasks: null,
@@ -14,6 +22,10 @@ class TaskManageList extends React.Component {
     };
 
     componentDidMount(): void {
+        let {loginAccount, history} = this.props;
+        if (!loginAccount.manager) {
+            history.replace("/supplier/develop/tasks/list")
+        }
         this.fetchTasks();
     }
 
@@ -57,90 +69,98 @@ class TaskManageList extends React.Component {
 
     columns = [
         {
-            title: "Name",
+            title: "任务编号",
             dataIndex: 'id',
             key: 'id',
-            render: id => <TaskDetailDrawerLink taskId={id}>#{id}</TaskDetailDrawerLink>
+            render: id => (
+                <TaskDetailDrawerLink
+                    taskId={id}
+                    onClosed={() => this.fetchTasks()}>
+                    #{id}
+                </TaskDetailDrawerLink>
+            )
         },
         {
-            title: 'owner',
-            dataIndex: 'owner',
+            title: '负责人',
+            dataIndex: 'owner.name',
             key: 'owner',
             editable: true,
         }, {
-            title: 'company',
+            title: '供应商',
             dataIndex: 'company',
             key: 'company'
         }, {
-            title: 'type',
+            title: '任务类型',
             dataIndex: 'type',
             key: 'type'
         }, {
-            title: 'subtype',
+            title: '自类型',
             dataIndex: 'subtype',
             key: 'subtype'
         }, {
-            title: 'desc',
+            title: '任务描述',
             dataIndex: 'desc',
             key: 'desc'
         }, {
-            title: 'done',
+            title: '是否已完成',
             dataIndex: 'done',
-            key: 'done'
+            key: 'done',
+            render: done => done && <Icon type="check" />
         }, {
-            title: 'yesterday status',
+            title: '昨日进度',
             dataIndex: 'statusOfYesterday',
             key: 'statusOfYesterday',
             render: p => p && <ProgressLabel progress={p}/>
         }, {
-            title: 'current status',
+            title: '当前进度',
             dataIndex: 'statusOfToday',
             key: 'statusOfToday',
             render: p => p && <ProgressLabel progress={p}/>
         }, {
-            title: 'operation',
+            title: '操作',
             dataIndex: 'operation',
             render: (text, record) => (
                 <div>
+                    <Link to={"/supplier/develop/tasks/edit/" + record.id}>编辑</Link>
+                    <Divider type="vertical"/>
+                    <Link to={"/supplier/develop/tasks/detail/" + record.id}>详情</Link>
+                    <Divider type="vertical"/>
                     <Popconfirm title="Sure to delete?" onConfirm={() => this.deleteTask(record.id)}>
-                        <a href="javascript:">Delete</a>
+                        <a href="javascript:">删除</a>
                     </Popconfirm>
                     <Divider type="vertical"/>
-                    <Link to={"/supplier/develop/tasks/edit/" + record.id}>Edit</Link>
-                    <Divider type="vertical"/>
-                    <Link to={"/supplier/develop/tasks/detail/" + record.id}>Detail</Link>
-                    <Divider type="vertical"/>
-                    <a onClick={() => this.finishTask(record.id)}>Finish</a>
+                    <Popconfirm title="Sure to finish?" onConfirm={() => this.finishTask(record.id)}>
+                        <a href="javascript:">标为已完成</a>
+                    </Popconfirm>
                 </div>
             )
         }
     ];
 
-    toggleIncludingFinishedTasks = () => {
+    toggleIncludingFinishedTasks = checked => {
         this.setState({
             loading: true,
-            includingFinishedTasks: !this.state.includingFinishedTasks
-        });
-        this.fetchTasks();
+            includingFinishedTasks: checked
+        }, () => this.fetchTasks());
     };
 
     render() {
         return (
             <div>
-                <h2>Tasks</h2>
+                <h2>任务管理</h2>
                 <div>
                     <Link to="/supplier/develop/tasks/create">
                         <Button type="primary" style={{ marginBottom: 16 }}>
-                            Create
+                            添加新任务
                         </Button>
                     </Link>
-                    <span>
-                        Including finished tasks
+                    <label style={{marginLeft: "1em"}}>
                         <Switch
                             defaultChecked={this.state.includingFinishedTasks}
                             onChange={this.toggleIncludingFinishedTasks}
                         />
-                    </span>
+                        包含已完成任务
+                    </label>
                 </div>
                 <Table
                     loading={!this.state.tasks || this.state.loading}

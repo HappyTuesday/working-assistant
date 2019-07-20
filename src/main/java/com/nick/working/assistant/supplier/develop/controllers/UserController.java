@@ -44,7 +44,7 @@ public class UserController {
 
     @PutMapping
     public int add(User user) {
-        if (user.getUsername() == null || user.getUsername().isEmpty()) {
+        if (user.getName() == null || user.getName().isEmpty()) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
         }
 
@@ -52,10 +52,10 @@ public class UserController {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
         }
 
-        user.setUsername(user.getUsername().trim());
+        user.setName(user.getName().trim());
         user.setPassword(user.getPassword().trim());
 
-        if (repository.existsByUsername(user.getUsername())) {
+        if (repository.existsByName(user.getName())) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
         }
 
@@ -64,7 +64,17 @@ public class UserController {
 
     @PostMapping
     public void update(User user) {
-        repository.save(user.toDTO());
+        Optional<UserDTO> optionalUserDTO = repository.findById(user.getId());
+        if (!optionalUserDTO.isPresent()) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        }
+        UserDTO dto = optionalUserDTO.get();
+        if (!Objects.equals(user.getName(), dto.getName())) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        }
+        dto.setPassword(user.getPassword());
+        dto.setManager(user.isManager());
+        repository.save(dto);
     }
 
     @DeleteMapping("{id}")
@@ -73,8 +83,8 @@ public class UserController {
     }
 
     @PostMapping("login")
-    public User login(String username, String password) {
-        UserDTO user = repository.findUserByUsername(username);
+    public User login(String name, String password) {
+        UserDTO user = repository.findUserByName(name);
         if (user != null && Objects.equals(user.getPassword(), password)) {
             return new User(user);
         }

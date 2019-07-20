@@ -27,6 +27,9 @@ function collectParams(param, name = undefined): string[] {
     if (!name) {
         throw new Error("name must be provided");
     }
+    if (param === undefined || param === null) {
+        return [];
+    }
     return [name + '=' + encodeURI('' + param)];
 }
 

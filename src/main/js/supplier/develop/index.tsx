@@ -17,7 +17,6 @@ const { Footer } = Layout;
 import { Avatar } from 'antd';
 import {updateAccount} from "./redux/actions";
 import {User} from "./models/User";
-import {IndexPage} from "./pages";
 import {UserListPage} from "./pages/user";
 import {CreateUserPage} from "./pages/user/create";
 import {EditUserPage} from "./pages/user/edit";
@@ -66,23 +65,23 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
         let menuItems = [];
 
         if (loginAccount) {
+            menuItems.push(this.renderMenuItem({
+                key: "1",
+                title: "我的任务",
+                link: "/supplier/develop/tasks/list"
+            }));
+
             if (loginAccount.manager) {
                 menuItems.push(this.renderMenuItem({
-                    key: "1",
-                    title: "Tasks",
+                    key: "2",
+                    title: "任务管理",
                     link: "/supplier/develop/tasks/manage"
                 }));
 
                 menuItems.push(this.renderMenuItem({
-                    key: "2",
-                    title: "Users",
+                    key: "3",
+                    title: "用户管理",
                     link: "/supplier/develop/users/list"
-                }));
-            } else {
-                menuItems.push(this.renderMenuItem({
-                    key: "1",
-                    title: "Tasks",
-                    link: "/supplier/develop/tasks/list"
                 }));
             }
         }
@@ -95,8 +94,8 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
                     alt="avatar"
                     style={{ backgroundColor: '#42cbd0' }}
                 />
-                <a onClick={() => this.logout()} style={{ paddingLeft: "1em"}} title="log out">
-                    {loginAccount.username}
+                <a onClick={() => this.logout()} style={{ paddingLeft: "1em"}} title="注销登录">
+                    {loginAccount.name}
                 </a>
             </span>
         );
@@ -105,7 +104,7 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
             <Layout style={{ minHeight: '100vh' }}>
                 <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
                     <div className="logo" />
-                    <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">{menuItems}</Menu>
+                    <Menu theme="dark" defaultSelectedKeys={[]} mode="inline">{menuItems}</Menu>
                 </Sider>
                 <Layout>
                     <Header style={{ padding: '0 50px 0 0', backgroundColor: "#f0f2f5" }}>
@@ -120,8 +119,8 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
                         <div style={{background: '#fff', padding: 24, minHeight: 580}}>
                             <Switch>
                                 {!loginAccount && <Route component={LoginPage}/>}
-                                <Route path="/supplier/develop" exact component={IndexPage}/>
-
+                                <Route path="/supplier/develop" exact component={TaskListPage}/>
+                                <Route path="/supplier/develop/tasks" exact component={TaskListPage}/>
                                 <Route path="/supplier/develop/tasks/list" component={TaskListPage}/>
                                 <Route path="/supplier/develop/tasks/manage" component={TaskManageListPage}/>
                                 <Route path="/supplier/develop/tasks/detail/:taskId" component={TaskDetailPage}/>

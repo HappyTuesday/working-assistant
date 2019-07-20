@@ -30,7 +30,7 @@ class ProgressForm extends React.Component<FormComponentProps & {taskId?, loginA
             params: {
                 content,
                 comment,
-                author: this.props.loginAccount.username
+                author: this.props.loginAccount.name
             }
         }, () => {
             notification.info({
@@ -49,7 +49,7 @@ class ProgressForm extends React.Component<FormComponentProps & {taskId?, loginA
         const { getFieldDecorator } = this.props.form;
         return (
             <Form layout="vertical" hideRequiredMark onSubmit={this.handleSubmit} title="Update Progress">
-                <Form.Item label="Content">
+                <Form.Item label="进度">
                     {getFieldDecorator('content', {
                         rules: [
                             {
@@ -59,12 +59,12 @@ class ProgressForm extends React.Component<FormComponentProps & {taskId?, loginA
                         ],
                     })(<Input />)}
                 </Form.Item>
-                <Form.Item label="Comment">
+                <Form.Item label="备注">
                     {getFieldDecorator('comment')(<Input.TextArea />)}
                 </Form.Item>
                 <Form.Item>
                     <Button type="primary" htmlType="submit">
-                        Commit
+                        提交进度
                     </Button>
                 </Form.Item>
             </Form>
@@ -98,11 +98,11 @@ class TaskDetail extends React.Component<{taskId, size?}> {
 
         let steps = history.map(p => (
             <Step
-                key={"" + p.timestamp}
+                key={p.id}
                 title={`[${dateFormat(p.timestamp, "yyyy/mm/dd hh:MM")}] ${p.content}`}
                 description={
                     <span>
-                         <span style={{color: "rgba(0,0,0,0.45", marginRight: "1em"}}>@{p.author}</span>
+                         <span style={{color: "rgba(0,0,0,0.45", marginRight: "1em"}}>@{p.author.name}</span>
                          <span>{p.comment}</span>
                     </span>
                 }
@@ -128,13 +128,13 @@ class TaskDetail extends React.Component<{taskId, size?}> {
 
         return (
             <div>
-                <Descriptions title={`Task #${task.id}`} column={size === 'small' ? 1 : 3} layout="horizontal">
-                    <Descriptions.Item label="Owner">{task.owner}</Descriptions.Item>
-                    <Descriptions.Item label="company">{task.company}</Descriptions.Item>
-                    <Descriptions.Item label="type">{task.type}</Descriptions.Item>
-                    <Descriptions.Item label="subtype">{task.subtype}</Descriptions.Item>
-                    <Descriptions.Item label="desc">{task.desc}</Descriptions.Item>
-                    <Descriptions.Item label="done">{task.done}</Descriptions.Item>
+                <Descriptions title={`任务 #${task.id}`} column={size === 'small' ? 1 : 3} layout="horizontal">
+                    <Descriptions.Item label="负责人">{task.owner.name}</Descriptions.Item>
+                    <Descriptions.Item label="供应商">{task.company}</Descriptions.Item>
+                    <Descriptions.Item label="任务类型">{task.type}</Descriptions.Item>
+                    <Descriptions.Item label="任务自类型">{task.subtype}</Descriptions.Item>
+                    <Descriptions.Item label="任务描述描述">{task.desc}</Descriptions.Item>
+                    <Descriptions.Item label="是否已完成">{task.done ? '已完成' : '未完成'}</Descriptions.Item>
                 </Descriptions>
                 {this.renderHistory()}
                 {form && <Divider/>}
@@ -157,7 +157,7 @@ export class TaskDetailPage extends React.Component<{match}> {
     render() {
         return (
             <div>
-                <h2>Task Detail</h2>
+                <h2>任务详情l</h2>
                 <TaskDetail taskId={this.props.match.params.taskId}/>
             </div>
         )
@@ -190,8 +190,8 @@ export class TaskDetailDrawer extends React.Component<{renderTrigger: (showDrawe
             <div>
                 {this.props.renderTrigger(this.showDrawer)}
                 <Drawer
-                    title="Task Detail"
-                    width={400}
+                    title="任务详情"
+                    width={450}
                     onClose={this.onClose}
                     visible={this.state.visible}>
                     <TaskDetail taskId={this.props.taskId} size="small"/>
@@ -204,7 +204,7 @@ export class TaskDetailDrawer extends React.Component<{renderTrigger: (showDrawe
 export class TaskDetailDrawerLink extends React.Component<{taskId, onClosed?}> {
     render() {
         return <TaskDetailDrawer taskId={this.props.taskId} onClosed={this.props.onClosed} renderTrigger={
-            showDrawer => <a onClick={showDrawer}>{this.props.children}</a>
+            showDrawer => <a onClick={showDrawer} title="点击查看详情">{this.props.children}</a>
         }/>
     }
 }

@@ -5,7 +5,7 @@ export class ProgressLabel extends React.Component<{progress}> {
         let {progress: p} = this.props;
 
         return (
-            <span title={`@${p.author} ${p.comment}`}>{p.content}</span>
+            <span title={`@${p.author.name} ${p.comment}`}>{p.content}</span>
         )
     }
 }
