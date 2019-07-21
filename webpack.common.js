@@ -1,14 +1,33 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 module.exports = {
     entry: './src/main/js/app.tsx',
-    devtool: 'sourcemaps',
     cache: true,
-    mode: 'development',
     output: {
-        path: __dirname,
-        filename: './src/main/resources/static/built/bundle.js'
+        path: __dirname + "/src/main/resources/static/built/",
+        filename: '[name].[contenthash].js',
+        publicPath: "/built/"
     },
     resolve: {
         extensions: [ '.tsx', '.ts', '.js', '.less', '.css' ]
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: 'src/main/js/documents.ejs',
+            filename: 'index.html'
+        })
+    ],
+    optimization: {
+        runtimeChunk: "single",
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    chunks: 'all'
+                }
+            }
+        }
     },
     module: {
         rules: [

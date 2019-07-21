@@ -17,6 +17,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<docker.image.prefix>nick</docker.image.prefix>
+		<webpack.mode>prod</webpack.mode>
 	</properties>
 
 	<dependencies>
@@ -107,6 +108,9 @@
 						<goals>
 							<goal>webpack</goal>
 						</goals>
+						<configuration>
+							<arguments>--config webpack.${webpack.mode}.js</arguments>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

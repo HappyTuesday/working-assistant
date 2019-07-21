@@ -9,7 +9,12 @@ import java.io.IOException;
 @Controller
 public class IndexController {
     @RequestMapping("/**/{path:[^\\.]+}")
-    public String index() throws IOException {
-        return "forward:/index.html";
+    public String index() {
+        return home();
+    }
+
+    @RequestMapping("/")
+    public String home() {
+        return "forward:/built/index.html";
     }
 }

@@ -13,5 +13,5 @@ services:
         --spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL8Dialect
     network_mode: bridge
     ports:
-      - 8080:8080
+      - 80:8080
     container_name: working-assistant
