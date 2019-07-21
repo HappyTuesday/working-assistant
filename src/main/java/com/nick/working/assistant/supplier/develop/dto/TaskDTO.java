@@ -10,7 +10,7 @@ import java.util.List;
 @Entity(name = "supplier_develop_task")
 public class TaskDTO {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @ManyToOne
     @JoinColumn
@@ -18,7 +18,7 @@ public class TaskDTO {
     private String company;
     private String type;
     private String subtype;
-    private String desc;
+    private String description;
     private boolean done;
     private Date doneTime;
 }

@@ -128,6 +128,14 @@ public class UserController {
         return result;
     }
 
+    public User findUserByName(String name) {
+        UserDTO userDTO = repository.findUserByName(name);
+        if (userDTO == null) {
+            return null;
+        }
+        return new User(userDTO);
+    }
+
     @PostMapping("login")
     public LoginResult login(String name, String password) {
         UserDTO userDTO = repository.findUserByName(name);

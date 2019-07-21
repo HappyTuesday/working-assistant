@@ -28,11 +28,14 @@ public class DataProvider implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        User user = new User();
-        user.setId(1);
-        user.setName("admin");
-        user.setPassword("admin");
-        user.setManager(true);
-        userController.add(user);
+        User user = userController.findUserByName("admin");
+        if (user == null) {
+            user = new User();
+            user.setId(1);
+            user.setName("admin");
+            user.setPassword("admin");
+            user.setManager(true);
+            userController.add(user);
+        }
     }
 }

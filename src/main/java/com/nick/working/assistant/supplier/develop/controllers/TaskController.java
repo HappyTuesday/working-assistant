@@ -116,7 +116,7 @@ public class TaskController {
         dto.setCompany(task.getCompany());
         dto.setType(task.getType());
         dto.setSubtype(task.getSubtype());
-        dto.setDesc(task.getDesc());
+        dto.setDescription(task.getDescription());
         dto.setDone(task.isDone());
         dto.setOwner(getUserDTO(task.getOwner().getName()));
 

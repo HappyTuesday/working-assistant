@@ -67,8 +67,8 @@ class TaskList extends React.Component<{loginAccount?}> {
             key: 'subtype'
         }, {
             title: '任务描述',
-            dataIndex: 'desc',
-            key: 'desc'
+            dataIndex: 'description',
+            key: 'description'
         }, {
             title: '昨日进度',
             dataIndex: 'statusOfYesterday',

@@ -15,7 +15,7 @@ public class Task {
     private String company;
     private String type;
     private String subtype;
-    private String desc;
+    private String description;
     private boolean done;
     private Date doneTime;
     private Progress statusOfYesterday;
@@ -29,7 +29,7 @@ public class Task {
         this.company = dto.getCompany();
         this.type = dto.getType();
         this.subtype = dto.getSubtype();
-        this.desc = dto.getDesc();
+        this.description = dto.getDescription();
         this.done = dto.isDone();
         this.doneTime = dto.getDoneTime();
 
@@ -65,7 +65,7 @@ public class Task {
         dto.setCompany(company);
         dto.setType(type);
         dto.setSubtype(subtype);
-        dto.setDesc(desc);
+        dto.setDescription(description);
         dto.setDone(done);
         dto.setDoneTime(doneTime);
         return dto;

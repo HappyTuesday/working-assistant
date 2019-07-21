@@ -9,7 +9,7 @@ import java.util.Date;
 @Entity(name = "supplier_develop_progress")
 public class ProgressDTO {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int taskId;
     @ManyToOne

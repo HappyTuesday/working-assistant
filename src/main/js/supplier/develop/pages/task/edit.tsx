@@ -154,12 +154,12 @@ class EditForm extends React.Component<EditFormProps & {history, loginAccount}, 
                     })(<Input />)}
                 </Form.Item>
                 <Form.Item label="任务描述">
-                    {getFieldDecorator('desc', {
-                        initialValue: task.desc,
+                    {getFieldDecorator('description', {
+                        initialValue: task.description,
                         rules: [
                             {
                                 required: true,
-                                message: 'Please input the desc!',
+                                message: 'Please input the description!',
                             },
                         ],
                     })(<Input />)}

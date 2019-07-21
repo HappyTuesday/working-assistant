@@ -47,7 +47,7 @@ public class TasksExcelView extends AbstractXlsxView {
             row.createCell(2).setCellValue(task.getCompany());
             row.createCell(3).setCellValue(task.getType());
             row.createCell(4).setCellValue(task.getSubtype());
-            row.createCell(5).setCellValue(task.getDesc());
+            row.createCell(5).setCellValue(task.getDescription());
             Progress py = task.getStatusOfYesterday();
             if (py != null) {
                 row.createCell(6).setCellValue(py.getContent());
