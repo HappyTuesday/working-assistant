@@ -13,11 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/supplier/develop/tasks")
@@ -36,16 +34,12 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> findAll(Boolean done, String owner) {
+    public List<Task> findAll(boolean done, String owner) {
         Iterable<TaskDTO> iterable;
-        if (done != null && owner != null) {
+        if (owner != null) {
             iterable = repository.findAllByOwnerNameAndDone(owner, done);
-        } else if (done != null) {
-            iterable = repository.findAllByDone(done);
-        } else if (owner != null) {
-            iterable = repository.findAllByOwnerName(owner);
         } else {
-            iterable = repository.findAll();
+            iterable = repository.findAllByDone(done);
         }
 
         List<Task> list = new ArrayList<>();
@@ -53,6 +47,11 @@ public class TaskController {
             list.add(new Task(dto, progressRepository.findAllByTaskIdOrderByTimestampDesc(dto.getId())));
         }
         return list;
+    }
+
+    @GetMapping("excel")
+    public ModelAndView exportAllToExcel(boolean done, String owner) {
+        return new ModelAndView("tasksExcelView", Collections.singletonMap("tasks", findAll(done, owner)));
     }
 
     @GetMapping("{id}")
@@ -97,6 +96,8 @@ public class TaskController {
 
         TaskDTO dto = task.toDTO();
         dto.setOwner(getUserDTO(task.getOwner().getName()));
+        dto.setDone(false);
+        dto.setDoneTime(null);
 
         return repository.save(dto).getId();
     }
@@ -118,6 +119,14 @@ public class TaskController {
         dto.setDesc(task.getDesc());
         dto.setDone(task.isDone());
         dto.setOwner(getUserDTO(task.getOwner().getName()));
+
+        if (task.isDone()) {
+            if (dto.getDoneTime() == null) {
+                dto.setDoneTime(new Date());
+            }
+        } else {
+            dto.setDoneTime(null);
+        }
         repository.save(dto);
     }
 
@@ -152,6 +161,7 @@ public class TaskController {
             TaskDTO dto = result.get();
             if (!dto.isDone()) {
                 dto.setDone(true);
+                dto.setDoneTime(new Date());
                 repository.save(dto);
             }
         } else {

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from "react-router-dom";
-import { notification } from "antd";
+import {Checkbox, message} from "antd";
 import {request} from "../../../../request";
 
 import {
@@ -26,10 +26,7 @@ class CreateForm extends React.Component<any> {
             method: "PUT",
             params: user
         }, () => {
-            notification.info({
-                message: 'Created Successfully',
-                description: "User has been created!"
-            });
+            message.info(`用户[${user.name}]创建成功！`);
         });
     }
 
@@ -84,10 +81,10 @@ class CreateForm extends React.Component<any> {
                 <Form.Item label="是否为管理员">
                     {getFieldDecorator('manager', {
                         initialValue: false,
-                    })(<Input type="checkbox" />)}
+                    })(<Checkbox />)}
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" icon="user-add">
                         创建
                     </Button>
                 </Form.Item>
@@ -102,7 +99,7 @@ export class CreateUserPage extends React.Component {
     render() {
         return (
             <div>
-                <h2>创建用户</h2>
+                <h2>创建新用户</h2>
                 <WrappedCreateForm/>
             </div>
         )

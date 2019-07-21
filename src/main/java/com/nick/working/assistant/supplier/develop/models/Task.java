@@ -17,6 +17,7 @@ public class Task {
     private String subtype;
     private String desc;
     private boolean done;
+    private Date doneTime;
     private Progress statusOfYesterday;
     private Progress statusOfToday;
 
@@ -30,6 +31,7 @@ public class Task {
         this.subtype = dto.getSubtype();
         this.desc = dto.getDesc();
         this.done = dto.isDone();
+        this.doneTime = dto.getDoneTime();
 
         if (!progresses.isEmpty()) {
             ProgressDTO p = progresses.get(0);
@@ -65,6 +67,7 @@ public class Task {
         dto.setSubtype(subtype);
         dto.setDesc(desc);
         dto.setDone(done);
+        dto.setDoneTime(doneTime);
         return dto;
     }
 }

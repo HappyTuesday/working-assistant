@@ -1,5 +1,6 @@
 package com.nick.working.assistant.supplier.develop;
 
+import com.nick.working.assistant.supplier.develop.controllers.UserController;
 import com.nick.working.assistant.supplier.develop.dto.ProgressDTO;
 import com.nick.working.assistant.supplier.develop.dto.TaskDTO;
 import com.nick.working.assistant.supplier.develop.dto.UserDTO;
@@ -18,47 +19,20 @@ import java.util.Date;
 @Component
 public class DataProvider implements CommandLineRunner {
 
-    private final TaskRepository taskRepository;
-    private final ProgressRepository progressRepository;
-    private final UserRepository userRepository;
+    private final UserController userController;
 
     @Autowired
-    public DataProvider(TaskRepository taskRepository, ProgressRepository progressRepository, UserRepository userRepository) {
-        this.taskRepository = taskRepository;
-        this.progressRepository = progressRepository;
-        this.userRepository = userRepository;
+    public DataProvider(UserController userController) {
+        this.userController = userController;
     }
 
     @Override
     public void run(String... args) {
-        UserDTO u = new UserDTO();
-        u.setName("nick");
-        u.setPassword("nick");
-        u.setManager(true);
-        this.userRepository.save(u);
-
-        UserDTO u2 = new UserDTO();
-        u2.setName("hh");
-        u2.setPassword("hh");
-        u2.setManager(false);
-        this.userRepository.save(u2);
-
-        TaskDTO t = new TaskDTO();
-        t.setId(1);
-        t.setOwner(u);
-        t.setCompany("google");
-        t.setType("buy");
-        t.setSubtype("buy-computer");
-        t.setDesc("buy something");
-        this.taskRepository.save(t);
-
-        ProgressDTO p = new ProgressDTO();
-        p.setId(1);
-        p.setTaskId(2);
-        p.setComment("payed");
-        p.setContent("payed");
-        p.setAuthor(u);
-        p.setTimestamp(new Date());
-        this.progressRepository.save(p);
+        User user = new User();
+        user.setId(1);
+        user.setName("admin");
+        user.setPassword("admin");
+        user.setManager(true);
+        userController.add(user);
     }
 }

@@ -6,37 +6,35 @@ import {TaskDetailDrawerLink} from "./detail";
 import {ProgressLabel} from "./progress";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
+import dateFormat from "dateformat"
 
 @connect(
     state => ({
         loginAccount: state.accounts.loginAccount
     })
 )
-@withRouter
-class TaskManageList extends React.Component<{loginAccount?, history?}> {
+class TaskManageList extends React.Component<{loginAccount?}> {
 
     state = {
         tasks: null,
         loading: true,
-        includingFinishedTasks: false
+        onlyFinishedTasks: false
     };
 
     componentDidMount(): void {
-        let {loginAccount, history} = this.props;
-        if (!loginAccount.manager) {
-            history.replace("/supplier/develop/tasks/list")
-        }
         this.fetchTasks();
     }
 
-    fetchTasks() {
-        let params = [];
-        if (!this.state.includingFinishedTasks) {
-            params.push("done=false")
-        }
+    getQueryParams() {
+        let params = [
+            "done=" + this.state.onlyFinishedTasks
+        ];
+        return params.join("&");
+    }
 
+    fetchTasks() {
         request({
-            url: "/api/supplier/develop/tasks?" + params.join("&")
+            url: "/api/supplier/develop/tasks?" + this.getQueryParams()
         }, tasks => {
             this.setState({
                 loading: false,
@@ -67,80 +65,107 @@ class TaskManageList extends React.Component<{loginAccount?, history?}> {
         });
     }
 
-    columns = [
-        {
-            title: "任务编号",
-            dataIndex: 'id',
-            key: 'id',
-            render: id => (
-                <TaskDetailDrawerLink
-                    taskId={id}
-                    onClosed={() => this.fetchTasks()}>
-                    #{id}
-                </TaskDetailDrawerLink>
-            )
-        },
-        {
-            title: '负责人',
-            dataIndex: 'owner.name',
-            key: 'owner',
-            editable: true,
-        }, {
-            title: '供应商',
-            dataIndex: 'company',
-            key: 'company'
-        }, {
-            title: '任务类型',
-            dataIndex: 'type',
-            key: 'type'
-        }, {
-            title: '自类型',
-            dataIndex: 'subtype',
-            key: 'subtype'
-        }, {
-            title: '任务描述',
-            dataIndex: 'desc',
-            key: 'desc'
-        }, {
-            title: '是否已完成',
-            dataIndex: 'done',
-            key: 'done',
-            render: done => done && <Icon type="check" />
-        }, {
-            title: '昨日进度',
-            dataIndex: 'statusOfYesterday',
-            key: 'statusOfYesterday',
-            render: p => p && <ProgressLabel progress={p}/>
-        }, {
-            title: '当前进度',
-            dataIndex: 'statusOfToday',
-            key: 'statusOfToday',
-            render: p => p && <ProgressLabel progress={p}/>
-        }, {
-            title: '操作',
-            dataIndex: 'operation',
-            render: (text, record) => (
-                <div>
-                    <Link to={"/supplier/develop/tasks/edit/" + record.id}>编辑</Link>
-                    <Divider type="vertical"/>
-                    <Link to={"/supplier/develop/tasks/detail/" + record.id}>详情</Link>
-                    <Divider type="vertical"/>
-                    <Popconfirm title="Sure to delete?" onConfirm={() => this.deleteTask(record.id)}>
-                        <a href="javascript:">删除</a>
-                    </Popconfirm>
-                    <Divider type="vertical"/>
-                    <Popconfirm title="Sure to finish?" onConfirm={() => this.finishTask(record.id)}>
-                        <a href="javascript:">标为已完成</a>
-                    </Popconfirm>
-                </div>
+    get columns() {
+
+        let doneTimeColumns = [];
+        let {onlyFinishedTasks} = this.state;
+
+        if (onlyFinishedTasks) {
+            doneTimeColumns.push(
+                {
+                    title: '完成时间',
+                    dataIndex: 'doneTime',
+                    key: 'doneTime',
+                    render: doneTime => dateFormat(doneTime, "yyyy/mm/dd HH:MM")
+                }
             )
         }
-    ];
 
-    toggleIncludingFinishedTasks = checked => {
+        return [
+            {
+                title: "任务编号",
+                dataIndex: 'id',
+                key: 'id',
+                render: id => (
+                    <span>
+                    <TaskDetailDrawerLink
+                        taskId={id}
+                        onClosed={() => this.fetchTasks()}>
+                        #{id}
+                    </TaskDetailDrawerLink>
+                </span>
+                )
+            },
+            {
+                title: '负责人',
+                dataIndex: 'owner.name',
+                key: 'owner'
+            }, {
+                title: '供应商',
+                dataIndex: 'company',
+                key: 'company'
+            }, {
+                title: '任务类型',
+                dataIndex: 'type',
+                key: 'type'
+            }, {
+                title: '子类型',
+                dataIndex: 'subtype',
+                key: 'subtype'
+            }, {
+                title: '任务描述',
+                dataIndex: 'desc',
+                key: 'desc'
+            }, {
+                title: '昨日进度',
+                dataIndex: 'statusOfYesterday',
+                key: 'statusOfYesterday',
+                render: p => p && <ProgressLabel progress={p}/>
+            }, {
+                title: '当前进度',
+                dataIndex: 'statusOfToday',
+                key: 'statusOfToday',
+                render: p => p && <ProgressLabel progress={p}/>
+            },
+            ...doneTimeColumns,
+            {
+                title: '操作',
+                dataIndex: 'operation',
+                render: (text, record) => (
+                    <div>
+                        <Link to={"/supplier/develop/tasks/detail/" + record.id}>
+                            <Icon type="menu-unfold" title="查看详情"/>
+                        </Link>
+                        {!onlyFinishedTasks && (
+                            <React.Fragment>
+                                <Divider type="vertical"/>
+                                <Popconfirm title="Sure to finish?" onConfirm={() => this.finishTask(record.id)}>
+                                    <a href="javascript:" title="将此任务标记为已完成">
+                                        <Icon type="check"/>
+                                    </a>
+                                </Popconfirm>
+                            </React.Fragment>
+                        )}
+                        <Divider type="vertical"/>
+                        <Link to={"/supplier/develop/tasks/edit/" + record.id}>
+                            <Icon type="edit" title="编辑此任务"/>
+                        </Link>
+                        <Divider type="vertical"/>
+                        <Popconfirm title="Sure to delete?" onConfirm={() => this.deleteTask(record.id)}>
+                            <a href="javascript:" title="删除此任务">
+                                <Icon type="delete"/>
+                            </a>
+                        </Popconfirm>
+                    </div>
+                )
+            }
+        ];
+    }
+
+    toggleOnlyFinishedTasks = checked => {
         this.setState({
             loading: true,
-            includingFinishedTasks: checked
+            onlyFinishedTasks: checked
         }, () => this.fetchTasks());
     };
 
@@ -150,17 +175,23 @@ class TaskManageList extends React.Component<{loginAccount?, history?}> {
                 <h2>任务管理</h2>
                 <div>
                     <Link to="/supplier/develop/tasks/create">
-                        <Button type="primary" style={{ marginBottom: 16 }}>
+                        <Button type="primary" style={{ marginBottom: 16 }} icon="plus">
                             添加新任务
                         </Button>
                     </Link>
                     <label style={{marginLeft: "1em"}}>
                         <Switch
-                            defaultChecked={this.state.includingFinishedTasks}
-                            onChange={this.toggleIncludingFinishedTasks}
+                            defaultChecked={this.state.onlyFinishedTasks}
+                            onChange={this.toggleOnlyFinishedTasks}
                         />
-                        包含已完成任务
+                        仅已完成任务
                     </label>
+                    <a href={"/api/supplier/develop/tasks/excel?" + this.getQueryParams()}
+                       style={{marginLeft: "1em"}}
+                       title="导出"
+                       download>
+                        <Icon type="export" /> 导出到Excel
+                    </a>
                 </div>
                 <Table
                     loading={!this.state.tasks || this.state.loading}

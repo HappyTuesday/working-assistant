@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Descriptions, Divider, Drawer, Form, Input, notification, Skeleton, Steps} from "antd";
+import {Button, Descriptions, Divider, Drawer, Form, Input, message, Skeleton, Steps} from "antd";
 import {request} from "../../../../request";
 import { connect } from "react-redux";
 import {FormComponentProps} from "antd/lib/form";
@@ -24,8 +24,9 @@ class ProgressForm extends React.Component<FormComponentProps & {taskId?, loginA
     };
 
     updateProcess(content, comment) {
+        let taskId = this.props.taskId;
         request({
-            url: "/api/supplier/develop/tasks/progress/" + this.props.taskId,
+            url: "/api/supplier/develop/tasks/progress/" + taskId,
             method: "PUT",
             params: {
                 content,
@@ -33,10 +34,7 @@ class ProgressForm extends React.Component<FormComponentProps & {taskId?, loginA
                 author: this.props.loginAccount.name
             }
         }, () => {
-            notification.info({
-                message: 'Updated Successfully',
-                description: "Task has been updated!"
-            });
+            message.info(`任务#${taskId}的进度汇报成功`);
 
             let {onCommitted} = this.props;
             if (onCommitted) {
@@ -63,7 +61,7 @@ class ProgressForm extends React.Component<FormComponentProps & {taskId?, loginA
                     {getFieldDecorator('comment')(<Input.TextArea />)}
                 </Form.Item>
                 <Form.Item>
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" icon="save">
                         提交进度
                     </Button>
                 </Form.Item>
@@ -99,7 +97,7 @@ class TaskDetail extends React.Component<{taskId, size?}> {
         let steps = history.map(p => (
             <Step
                 key={p.id}
-                title={`[${dateFormat(p.timestamp, "yyyy/mm/dd hh:MM")}] ${p.content}`}
+                title={`[${dateFormat(p.timestamp, "yyyy/mm/dd HH:MM")}] ${p.content}`}
                 description={
                     <span>
                          <span style={{color: "rgba(0,0,0,0.45", marginRight: "1em"}}>@{p.author.name}</span>
@@ -135,6 +133,11 @@ class TaskDetail extends React.Component<{taskId, size?}> {
                     <Descriptions.Item label="任务自类型">{task.subtype}</Descriptions.Item>
                     <Descriptions.Item label="任务描述描述">{task.desc}</Descriptions.Item>
                     <Descriptions.Item label="是否已完成">{task.done ? '已完成' : '未完成'}</Descriptions.Item>
+                    {task.doneTime && (
+                        <Descriptions.Item label="任务完成时间">
+                            {dateFormat(task.doneTime, "yyyy/mm/dd HH:MM")}
+                        </Descriptions.Item>
+                    )}
                 </Descriptions>
                 {this.renderHistory()}
                 {form && <Divider/>}
@@ -146,7 +149,7 @@ class TaskDetail extends React.Component<{taskId, size?}> {
     render() {
         let {detail} = this.state;
         return (
-            <Skeleton active={true} loading={!detail}>
+            <Skeleton loading={!detail}>
                 {detail && this.renderDetail()}
             </Skeleton>
         )
@@ -157,7 +160,7 @@ export class TaskDetailPage extends React.Component<{match}> {
     render() {
         return (
             <div>
-                <h2>任务详情l</h2>
+                <h2>任务详情</h2>
                 <TaskDetail taskId={this.props.match.params.taskId}/>
             </div>
         )

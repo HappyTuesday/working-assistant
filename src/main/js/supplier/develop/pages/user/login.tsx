@@ -1,14 +1,71 @@
 import React from 'react';
 
 import { withRouter } from "react-router";
-import {Form, Icon, Input, Button, Checkbox, Card} from 'antd';
+import {Form, Icon, Input, Button, Checkbox, Card, message} from 'antd';
 import { connect } from "react-redux";
 import {updateAccount} from "../../redux/actions";
 import {request} from "../../../../request";
 import {FormComponentProps} from "antd/lib/form";
 
+const TICKET_NAME = "login-ticket";
+
+export function clearLoginTicket() {
+    localStorage.setItem(TICKET_NAME, "");
+}
+
 @connect(null, {updateAccount})
 class LoginForm extends React.Component<FormComponentProps & {updateAccount, history}> {
+
+    state = {
+        loading: true
+    };
+
+    componentDidMount(): void {
+        this.loginByTicket();
+    }
+
+    loginByTicket() {
+        let ticket = localStorage.getItem(TICKET_NAME);
+        if (ticket) {
+            request({
+                url: "/api/supplier/develop/users/login/ticket",
+                method: 'POST',
+                params: {ticket}
+            }, result => {
+                this.processLoginResult(result, true);
+            })
+        } else {
+            this.setState({loading: false})
+        }
+    }
+
+    login(name: string, password: string) {
+        request({
+            url: "/api/supplier/develop/users/login",
+            method: 'POST',
+            params: {name, password}
+        }, result => {
+            this.processLoginResult(result, false);
+        })
+    }
+
+    processLoginResult(loginResult, autoLogin) {
+        localStorage.setItem(TICKET_NAME, "");
+
+        this.setState({
+            loading: false
+        });
+
+        if (loginResult && loginResult.user) {
+            if (loginResult.ticket) {
+                localStorage.setItem(TICKET_NAME, loginResult.ticket);
+            }
+            this.props.updateAccount(loginResult.user);
+        } else {
+            message.error(autoLogin ? "自动登录失败，请输入用户名和密码登录！" : "登录失败，请确认用户名和密码并重新登录！");
+        }
+    }
+
     handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -18,20 +75,11 @@ class LoginForm extends React.Component<FormComponentProps & {updateAccount, his
         });
     };
 
-    login(name: string, password: string) {
-        request({
-            url: "/api/supplier/develop/users/login",
-            method: 'POST',
-            params: {name, password}
-        }, user => {
-            this.props.updateAccount(user);
-        })
-    }
-
     render() {
+        let {loading} = this.state;
         const { getFieldDecorator } = this.props.form;
         return (
-            <Card title="登录">
+            <Card title="登录" loading={loading}>
                 <Form onSubmit={this.handleSubmit} className="login-form" style={{maxWidth: "300px"}}>
                     <Form.Item>
                         {getFieldDecorator('name', {
@@ -64,7 +112,7 @@ class LoginForm extends React.Component<FormComponentProps & {updateAccount, his
                         </a>
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" className="login-form-button">
+                        <Button type="primary" htmlType="submit" className="login-form-button" icon="login">
                             登录
                         </Button>
                     </Form.Item>

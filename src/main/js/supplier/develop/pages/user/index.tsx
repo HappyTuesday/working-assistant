@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from "react-router-dom";
-import {Table, Button, Popconfirm, Divider, Select} from "antd";
+import {Table, Button, Popconfirm, Divider, Select, Icon} from "antd";
 import {request} from "../../../../request";
 const {Option} = Select;
 
@@ -47,17 +47,22 @@ class UserList extends React.Component {
         }, {
             title: '是否为管理员',
             dataIndex: 'manager',
-            key: 'manager'
+            key: 'manager',
+            render: manager => manager ? '管理员' : '普通用户'
         }, {
             title: '操作',
             dataIndex: 'operation',
             render: (text, record) => (
                 <div>
                     <Popconfirm title="Sure to delete?" onConfirm={() => this.deleteUser(record.id)}>
-                        <a href="javascript:">删除</a>
+                        <a href="javascript:" title="删除此用户">
+                            <Icon type="delete"/>
+                        </a>
                     </Popconfirm>
                     <Divider type="vertical"/>
-                    <Link to={"/supplier/develop/users/edit/" + record.id}>编辑</Link>
+                    <Link to={"/supplier/develop/users/edit/" + record.id}>
+                        <Icon type="edit" title="编辑此用户"/>
+                    </Link>
                 </div>
             )
         }
@@ -68,7 +73,7 @@ class UserList extends React.Component {
             <div>
                 <h2>用户管理</h2>
                 <Link to="/supplier/develop/users/create">
-                    <Button type="primary" style={{ marginBottom: 16 }}>
+                    <Button type="primary" style={{ marginBottom: 16 }} icon="user-add">
                         创建新账号
                     </Button>
                 </Link>

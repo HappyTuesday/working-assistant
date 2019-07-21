@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
-import {notification, Skeleton} from "antd";
+import {Checkbox, message, Skeleton} from "antd";
 import {request} from "../../../../request";
 
 import {
@@ -45,10 +45,7 @@ class EditForm extends React.Component<EditFormProps & {history}, any> {
             method: "POST",
             params: user
         }, () => {
-            notification.info({
-                message: 'Updated Successfully',
-                description: "User has been updated!"
-            });
+            message.info(`用户[${user.name}]信息修改成功！`);
 
             this.props.history.push("/supplier/develop/users/list");
         });
@@ -117,10 +114,10 @@ class EditForm extends React.Component<EditFormProps & {history}, any> {
                 <Form.Item label="是否为管理员">
                     {getFieldDecorator('manager', {
                         initialValue: user.manager
-                    })(<Input type="checkbox" />)}
+                    })(<Checkbox defaultChecked={user.manager}/>)}
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" icon="save">
                         保存
                     </Button>
                 </Form.Item>
@@ -143,7 +140,7 @@ export class EditUserPage extends React.Component<{match}> {
     render() {
         return (
             <div>
-                <h2>编辑用户</h2>
+                <h2>编辑用户基本信息</h2>
                 <WrappedEditForm userId={this.props.match.params.userId}/>
             </div>
         )

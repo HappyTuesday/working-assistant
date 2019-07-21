@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
-import {notification, Skeleton} from "antd";
+import {Checkbox, message, Skeleton} from "antd";
 import {request} from "../../../../request";
 import { connect } from "react-redux";
 
@@ -50,10 +50,7 @@ class EditForm extends React.Component<EditFormProps & {history, loginAccount}, 
             method: "POST",
             params: task
         }, () => {
-            notification.info({
-                message: 'Updated Successfully',
-                description: "Task has been updated!"
-            });
+            message.info(`任务#${task.id}信息更新成功！`);
 
             let {loginAccount} = this.props;
             if (loginAccount.manager) {
@@ -145,7 +142,7 @@ class EditForm extends React.Component<EditFormProps & {history, loginAccount}, 
                         ],
                     })(<Input />)}
                 </Form.Item>
-                <Form.Item label="任务自类型">
+                <Form.Item label="任务子类型">
                     {getFieldDecorator('subtype', {
                         initialValue: task.subtype,
                         rules: [
@@ -167,8 +164,13 @@ class EditForm extends React.Component<EditFormProps & {history, loginAccount}, 
                         ],
                     })(<Input />)}
                 </Form.Item>
+                <Form.Item label="任务是否已完成">
+                    {getFieldDecorator('done', {
+                        initialValue: task.done
+                    })(<Checkbox defaultChecked={task.done}/>)}
+                </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" icon="save">
                         保存
                     </Button>
                 </Form.Item>

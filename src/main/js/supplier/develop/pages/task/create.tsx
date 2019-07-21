@@ -1,13 +1,12 @@
 import React from 'react'
 import { Link } from "react-router-dom";
-import { notification } from "antd";
 import {request} from "../../../../request";
 import { connect } from "react-redux";
 
 import {
     Form,
     Input,
-    Button,
+    Button, message,
 } from 'antd';
 import {UserSelect} from "../user";
 
@@ -32,11 +31,8 @@ class CreateForm extends React.Component<any> {
             url: "/api/supplier/develop/tasks",
             method: "PUT",
             params: task
-        }, () => {
-            notification.info({
-                message: 'Created Successfully',
-                description: "Task has been created!"
-            });
+        }, taskId => {
+            message.info(`任务#${taskId}创建成功！`);
         });
     }
 
@@ -101,7 +97,7 @@ class CreateForm extends React.Component<any> {
                         ],
                     })(<Input />)}
                 </Form.Item>
-                <Form.Item label="任务自类型">
+                <Form.Item label="任务子类型">
                     {getFieldDecorator('subtype', {
                         rules: [
                             {
@@ -122,7 +118,7 @@ class CreateForm extends React.Component<any> {
                     })(<Input />)}
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" icon="plus">
                         创建
                     </Button>
                 </Form.Item>

@@ -10,8 +10,7 @@ import {TaskListPage} from "./pages/task/tasks";
 import {CreateTaskPage} from "./pages/task/create";
 
 import {EditTaskPage} from "./pages/task/edit";
-import {NotFound} from "../../404";
-import {LoginPage} from "./pages/user/login";
+import {clearLoginTicket, LoginPage} from "./pages/user/login";
 const { Footer } = Layout;
 
 import { Avatar } from 'antd';
@@ -23,6 +22,23 @@ import {EditUserPage} from "./pages/user/edit";
 import {TaskManageListPage} from "./pages/task/manage";
 import {TaskDetailPage} from "./pages/task/detail";
 const { Header, Content, Sider } = Layout;
+
+@withRouter
+class NotFound extends React.Component<{location?}> {
+    render() {
+        return (
+            <div>
+                <h2>
+                    <span style={{marginRight: "1em"}}><Icon type="frown" /></span>
+                    找不到你要访问的资源（{this.props.location.pathname}）!
+                </h2>
+                <p>
+                    确认你输入的网站，或者<Link to="/supplier/develop">回到主页</Link>
+                </p>
+            </div>
+        )
+    }
+}
 
 @connect(
     state => ({
@@ -38,22 +54,23 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
     };
 
     logout() {
+        clearLoginTicket();
         this.props.updateAccount(null)
     }
 
     onCollapse = collapsed => {
         console.log(collapsed);
-        this.setState({ collapsed });
+        this.setState({collapsed});
     };
 
     navTo(link: string) {
         this.props.history.push(link)
     }
 
-    renderMenuItem({key, title, link}) {
+    renderMenuItem({key, title, link, icon}) {
         return (
             <Menu.Item key={key} onClick={() => this.navTo(link)}>
-                <Icon type="schedule" />
+                <Icon type={icon}/>
                 <span>{title}</span>
             </Menu.Item>
         )
@@ -68,20 +85,23 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
             menuItems.push(this.renderMenuItem({
                 key: "1",
                 title: "我的任务",
-                link: "/supplier/develop/tasks/list"
+                link: "/supplier/develop/tasks/list",
+                icon: "schedule"
             }));
 
             if (loginAccount.manager) {
                 menuItems.push(this.renderMenuItem({
                     key: "2",
                     title: "任务管理",
-                    link: "/supplier/develop/tasks/manage"
+                    link: "/supplier/develop/tasks/manage",
+                    icon: "database"
                 }));
 
                 menuItems.push(this.renderMenuItem({
                     key: "3",
                     title: "用户管理",
-                    link: "/supplier/develop/users/list"
+                    link: "/supplier/develop/users/list",
+                    icon: "user"
                 }));
             }
         }
@@ -92,22 +112,52 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
                     size="small"
                     icon="user"
                     alt="avatar"
-                    style={{ backgroundColor: '#42cbd0' }}
+                    style={{backgroundColor: '#42cbd0'}}
                 />
-                <a onClick={() => this.logout()} style={{ paddingLeft: "1em"}} title="注销登录">
-                    {loginAccount.name}
+                <span style={{padding: "0 1em 0 0.3em"}}>
+                    Welcome {loginAccount.name}
+                </span>
+                <a onClick={() => this.logout()} title="注销登录">
+                    <Icon type="logout" />
                 </a>
             </span>
         );
 
+        let routes = [];
+        if (loginAccount) {
+            routes.push(
+                <Route path="/supplier/develop" key="1" exact component={TaskListPage}/>,
+                <Route path="/supplier/develop/tasks" key="2" exact component={TaskListPage}/>,
+                <Route path="/supplier/develop/tasks/list" key="3" component={TaskListPage}/>,
+                <Route path="/supplier/develop/tasks/create" key="6" component={CreateTaskPage}/>
+            );
+
+            if (loginAccount.manager) {
+                routes.push(
+                    <Route path="/supplier/develop/tasks/manage" key="4" component={TaskManageListPage}/>,
+                    <Route path="/supplier/develop/tasks/detail/:taskId" key="5" component={TaskDetailPage}/>,
+                    <Route path="/supplier/develop/tasks/edit/:taskId" key="7" component={EditTaskPage}/>,
+                    <Route path="/supplier/develop/users/list" key="8" component={UserListPage}/>,
+                    <Route path="/supplier/develop/users/create" key="9" component={CreateUserPage}/>,
+                    <Route path="/supplier/develop/users/edit/:userId" key="10" component={EditUserPage}/>
+                )
+            }
+        } else {
+            routes.push(
+                <Route key="11" component={LoginPage}/>
+            )
+        }
+
+        routes.push(<Route key="12" component={NotFound}/>);
+
         return (
-            <Layout style={{ minHeight: '100vh' }}>
+            <Layout style={{minHeight: '100vh'}}>
                 <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
-                    <div className="logo" />
+                    <div className="logo"/>
                     <Menu theme="dark" defaultSelectedKeys={[]} mode="inline">{menuItems}</Menu>
                 </Sider>
                 <Layout>
-                    <Header style={{ padding: '0 50px 0 0', backgroundColor: "#f0f2f5" }}>
+                    <Header style={{padding: '0 50px 0 0', backgroundColor: "#f0f2f5"}}>
                         <PageHeader
                             onBack={() => window.history.back()}
                             title="Working Assistant"
@@ -118,20 +168,7 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
                     <Content style={{padding: '0 50px'}}>
                         <div style={{background: '#fff', padding: 24, minHeight: 580}}>
                             <Switch>
-                                {!loginAccount && <Route component={LoginPage}/>}
-                                <Route path="/supplier/develop" exact component={TaskListPage}/>
-                                <Route path="/supplier/develop/tasks" exact component={TaskListPage}/>
-                                <Route path="/supplier/develop/tasks/list" component={TaskListPage}/>
-                                <Route path="/supplier/develop/tasks/manage" component={TaskManageListPage}/>
-                                <Route path="/supplier/develop/tasks/detail/:taskId" component={TaskDetailPage}/>
-                                <Route path="/supplier/develop/tasks/create" component={CreateTaskPage}/>
-                                <Route path="/supplier/develop/tasks/edit/:taskId" component={EditTaskPage}/>
-
-                                <Route path="/supplier/develop/users/list" component={UserListPage}/>
-                                <Route path="/supplier/develop/users/create" component={CreateUserPage}/>
-                                <Route path="/supplier/develop/users/edit/:userId" component={EditUserPage}/>
-
-                                <Route component={NotFound}/>
+                                {routes}
                             </Switch>
                         </div>
                     </Content>

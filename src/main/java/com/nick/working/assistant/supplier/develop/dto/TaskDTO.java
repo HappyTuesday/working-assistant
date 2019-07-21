@@ -3,6 +3,7 @@ package com.nick.working.assistant.supplier.develop.dto;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -19,4 +20,5 @@ public class TaskDTO {
     private String subtype;
     private String desc;
     private boolean done;
+    private Date doneTime;
 }

@@ -16,7 +16,7 @@ class TaskList extends React.Component<{loginAccount?}> {
     state = {
         loading: true,
         tasks: null,
-        includingFinishedTasks: false
+        onlyFinishedTasks: false
     };
 
     componentDidMount(): void {
@@ -26,8 +26,8 @@ class TaskList extends React.Component<{loginAccount?}> {
     fetchTasks() {
         let {loginAccount: {name}} = this.props;
         let params = ["owner=" + name];
-        if (!this.state.includingFinishedTasks) {
-            params.push("done=false")
+        if (this.state.onlyFinishedTasks) {
+            params.push("done=true")
         }
 
         request({
@@ -82,10 +82,10 @@ class TaskList extends React.Component<{loginAccount?}> {
         }
     ];
 
-    toggleIncludingFinishedTasks = checked => {
+    toggleOnlyFinishedTasks = checked => {
         this.setState({
             loading: true,
-            includingFinishedTasks: checked
+            onlyFinishedTasks: checked
         }, () => this.fetchTasks());
     };
 
@@ -95,16 +95,16 @@ class TaskList extends React.Component<{loginAccount?}> {
                 <h2>我的任务列表</h2>
                 <div>
                     <Link to="/supplier/develop/tasks/create">
-                        <Button type="primary" style={{ marginBottom: 16 }}>
+                        <Button type="primary" style={{ marginBottom: 16 }} icon="plus">
                             添加新任务
                         </Button>
                     </Link>
                     <label style={{marginLeft: "1em"}}>
                         <Switch
-                            defaultChecked={this.state.includingFinishedTasks}
-                            onChange={this.toggleIncludingFinishedTasks}
+                            defaultChecked={this.state.onlyFinishedTasks}
+                            onChange={this.toggleOnlyFinishedTasks}
                         />
-                        包含已完成任务
+                        仅已完成任务
                     </label>
                 </div>
                 <Table

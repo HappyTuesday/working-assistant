@@ -30,7 +30,7 @@ function collectParams(param, name = undefined): string[] {
     if (param === undefined || param === null) {
         return [];
     }
-    return [name + '=' + encodeURI('' + param)];
+    return [name + '=' + encodeURIComponent('' + param)];
 }
 
 export function request({url, method = 'GET', params = {}}, callback: (result: any) => void) {
