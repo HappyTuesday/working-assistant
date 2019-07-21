@@ -130,7 +130,7 @@ class TaskDetail extends React.Component<{taskId, size?}> {
                     <Descriptions.Item label="负责人">{task.owner.name}</Descriptions.Item>
                     <Descriptions.Item label="供应商">{task.company}</Descriptions.Item>
                     <Descriptions.Item label="任务类型">{task.type}</Descriptions.Item>
-                    <Descriptions.Item label="任务自类型">{task.subtype}</Descriptions.Item>
+                    <Descriptions.Item label="任务子类型">{task.subtype}</Descriptions.Item>
                     <Descriptions.Item label="任务描述描述">{task.description}</Descriptions.Item>
                     <Descriptions.Item label="是否已完成">{task.done ? '已完成' : '未完成'}</Descriptions.Item>
                     {task.doneTime && (
