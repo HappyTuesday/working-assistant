@@ -113,7 +113,7 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                 dataIndex: 'type',
                 key: 'type'
             }, {
-                title: '子类型',
+                title: '品类',
                 dataIndex: 'subtype',
                 key: 'subtype'
             }, {

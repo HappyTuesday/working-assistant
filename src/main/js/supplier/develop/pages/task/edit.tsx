@@ -155,7 +155,7 @@ class EditForm extends React.Component<EditFormProps & {history, loginAccount}, 
                         ],
                     })(TASK_TYPE_SELECT)}
                 </Form.Item>
-                <Form.Item label="任务子类型">
+                <Form.Item label="品类">
                     {getFieldDecorator('subtype', {
                         initialValue: task.subtype,
                         rules: [
