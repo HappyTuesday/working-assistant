@@ -30,35 +30,37 @@ public class TasksExcelView extends AbstractXlsxView {
         Row header = sheet.createRow(0);
         header.createCell(0).setCellValue("任务编号");
         header.createCell(1).setCellValue("负责人");
-        header.createCell(2).setCellValue("供应商");
-        header.createCell(3).setCellValue("任务类型");
-        header.createCell(4).setCellValue("子类型");
-        header.createCell(5).setCellValue("任务描述");
-        header.createCell(6).setCellValue("昨日进度");
-        header.createCell(7).setCellValue("当前进度");
-        header.createCell(8).setCellValue("是否已结束");
-        header.createCell(9).setCellValue("结束时间");
+        header.createCell(2).setCellValue("供应商全称");
+        header.createCell(3).setCellValue("供应商类型");
+        header.createCell(4).setCellValue("任务类型");
+        header.createCell(5).setCellValue("子类型");
+        header.createCell(6).setCellValue("任务描述");
+        header.createCell(7).setCellValue("昨日进度");
+        header.createCell(8).setCellValue("当前进度");
+        header.createCell(9).setCellValue("是否已结束");
+        header.createCell(10).setCellValue("结束时间");
 
         for (int i = 0; i < tasks.size(); i++) {
             Task task = tasks.get(i);
             Row row = sheet.createRow(i + 1);
             row.createCell(0).setCellValue("#" + task.getId());
             row.createCell(1).setCellValue(task.getOwner().getName());
-            row.createCell(2).setCellValue(task.getCompany());
-            row.createCell(3).setCellValue(task.getType());
-            row.createCell(4).setCellValue(task.getSubtype());
-            row.createCell(5).setCellValue(task.getDescription());
+            row.createCell(2).setCellValue(task.getSupplierName());
+            row.createCell(3).setCellValue(task.getSupplierType());
+            row.createCell(4).setCellValue(task.getType());
+            row.createCell(5).setCellValue(task.getSubtype());
+            row.createCell(6).setCellValue(task.getDescription());
             Progress py = task.getStatusOfYesterday();
             if (py != null) {
-                row.createCell(6).setCellValue(py.getContent());
+                row.createCell(7).setCellValue(py.getContent());
             }
             Progress pt = task.getStatusOfToday();
             if (pt != null) {
-                row.createCell(7).setCellValue(pt.getContent());
+                row.createCell(8).setCellValue(pt.getContent());
             }
-            row.createCell(8).setCellValue(task.isDone() ? "是" : "否");
+            row.createCell(9).setCellValue(task.isDone() ? "是" : "否");
             if (task.getDoneTime() != null) {
-                row.createCell(9).setCellValue(DATE_FORMAT_IN_MINUTES.format(task.getDoneTime()));
+                row.createCell(10).setCellValue(DATE_FORMAT_IN_MINUTES.format(task.getDoneTime()));
             }
         }
 

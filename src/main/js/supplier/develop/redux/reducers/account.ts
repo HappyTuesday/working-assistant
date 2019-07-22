@@ -1,4 +1,4 @@
-import {User} from "../../models/User";
+import {User} from "../../models/user";
 
 export default function (state = {}, action: { type: string, payload: User }) {
     switch (action.type) {

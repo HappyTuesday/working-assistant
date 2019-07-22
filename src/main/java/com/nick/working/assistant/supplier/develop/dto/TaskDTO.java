@@ -15,7 +15,8 @@ public class TaskDTO {
     @ManyToOne
     @JoinColumn
     private UserDTO owner;
-    private String company;
+    private String supplierName;
+    private String supplierType;
     private String type;
     private String subtype;
     private String description;

@@ -17,7 +17,8 @@ create table supplier_develop_task
 (
   id int auto_increment,
   owner_id int not null,
-  company varchar(64) not null,
+  supplier_name varchar(64) not null,
+  supplier_type varchar(64) not null,
   type varchar(64) not null,
   subtype varchar(64) null,
   description varchar(256) null,

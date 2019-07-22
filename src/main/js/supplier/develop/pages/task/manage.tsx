@@ -101,9 +101,13 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                 dataIndex: 'owner.name',
                 key: 'owner'
             }, {
-                title: '供应商',
-                dataIndex: 'company',
-                key: 'company'
+                title: '供应商全称',
+                dataIndex: 'supplierName',
+                key: 'supplierName'
+            }, {
+                title: '供应商类型',
+                dataIndex: 'supplierType',
+                key: 'supplierType'
             }, {
                 title: '任务类型',
                 dataIndex: 'type',

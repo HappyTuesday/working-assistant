@@ -9,6 +9,8 @@ import {
     Button, message,
 } from 'antd';
 import {UserSelect} from "../user";
+import {TASK_TYPE_SELECT} from "../../models/task";
+import {SUPPLIER_TYPE_SELECT} from "../../models/supplier";
 
 @connect(
     state => ({
@@ -77,15 +79,25 @@ class CreateForm extends React.Component<any> {
                         ],
                     })(loginAccount.manager ? <UserSelect/> : <Input readOnly={true}/>)}
                 </Form.Item>
-                <Form.Item label="供应商">
-                    {getFieldDecorator('company', {
+                <Form.Item label="供应商全称">
+                    {getFieldDecorator('supplierName', {
                         rules: [
                             {
                                 required: true,
-                                message: 'Please input the company!',
+                                message: 'Please input the supplier name!',
                             },
                         ],
                     })(<Input />)}
+                </Form.Item>
+                <Form.Item label="供应商类型">
+                    {getFieldDecorator('supplierType', {
+                        rules: [
+                            {
+                                required: true,
+                                message: 'Please input the supplier type!',
+                            },
+                        ],
+                    })(SUPPLIER_TYPE_SELECT)}
                 </Form.Item>
                 <Form.Item label="任务类型">
                     {getFieldDecorator('type', {
@@ -95,7 +107,7 @@ class CreateForm extends React.Component<any> {
                                 message: 'Please input the type!',
                             },
                         ],
-                    })(<Input />)}
+                    })(TASK_TYPE_SELECT)}
                 </Form.Item>
                 <Form.Item label="任务子类型">
                     {getFieldDecorator('subtype', {

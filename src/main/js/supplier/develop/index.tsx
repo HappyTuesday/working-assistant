@@ -15,7 +15,7 @@ const { Footer } = Layout;
 
 import { Avatar } from 'antd';
 import {updateAccount} from "./redux/actions";
-import {User} from "./models/User";
+import {User} from "./models/user";
 import {UserListPage} from "./pages/user";
 import {CreateUserPage} from "./pages/user/create";
 import {EditUserPage} from "./pages/user/edit";

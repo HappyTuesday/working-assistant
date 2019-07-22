@@ -113,7 +113,8 @@ public class TaskController {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
         }
         TaskDTO dto = optionalTaskDTO.get();
-        dto.setCompany(task.getCompany());
+        dto.setSupplierName(task.getSupplierName());
+        dto.setSupplierType(task.getSupplierType());
         dto.setType(task.getType());
         dto.setSubtype(task.getSubtype());
         dto.setDescription(task.getDescription());

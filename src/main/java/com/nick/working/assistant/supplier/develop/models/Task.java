@@ -12,7 +12,8 @@ import java.util.List;
 public class Task {
     private int id;
     private User owner;
-    private String company;
+    private String supplierName;
+    private String supplierType;
     private String type;
     private String subtype;
     private String description;
@@ -26,7 +27,8 @@ public class Task {
     public Task(TaskDTO dto, List<ProgressDTO> progresses) {
         this.id = dto.getId();
         this.owner = new User(dto.getOwner());
-        this.company = dto.getCompany();
+        this.supplierName = dto.getSupplierName();
+        this.supplierType = dto.getSupplierType();
         this.type = dto.getType();
         this.subtype = dto.getSubtype();
         this.description = dto.getDescription();
@@ -62,7 +64,8 @@ public class Task {
         if (owner != null) {
             dto.setOwner(owner.toDTO());
         }
-        dto.setCompany(company);
+        dto.setSupplierName(supplierName);
+        dto.setSupplierType(supplierType);
         dto.setType(type);
         dto.setSubtype(subtype);
         dto.setDescription(description);
