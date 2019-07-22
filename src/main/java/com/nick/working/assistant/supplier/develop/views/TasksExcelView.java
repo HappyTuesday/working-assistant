@@ -34,7 +34,7 @@ public class TasksExcelView extends AbstractXlsxView {
         header.createCell(3).setCellValue("供应商类型");
         header.createCell(4).setCellValue("任务类型");
         header.createCell(5).setCellValue("品类");
-        header.createCell(6).setCellValue("任务描述");
+        header.createCell(6).setCellValue("备注");
         header.createCell(7).setCellValue("昨日进度");
         header.createCell(8).setCellValue("当前进度");
         header.createCell(9).setCellValue("是否已结束");

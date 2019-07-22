@@ -119,7 +119,7 @@ class CreateForm extends React.Component<any> {
                         ],
                     })(TASK_SUBTYPE_SELECT)}
                 </Form.Item>
-                <Form.Item label="任务描述">
+                <Form.Item label="备注">
                     {getFieldDecorator('description', {
                         rules: [
                             {
