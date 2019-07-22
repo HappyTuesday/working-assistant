@@ -7,7 +7,7 @@ git pull
 COMMIT_HASH=$(git rev-parse HEAD)
 export IMAGE_TAG=${COMMIT_HASH:0:6}
 
-./mvnw -Dwebpack.mode=prod package
+./mvnw -Dwebpack.mode=prod clean package
 
 docker build -t working-assistant:${IMAGE_TAG} .
 
