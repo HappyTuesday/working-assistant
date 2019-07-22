@@ -9,7 +9,7 @@ import {
     Button, message,
 } from 'antd';
 import {UserSelect} from "../user";
-import {TASK_TYPE_SELECT} from "../../models/task";
+import {TASK_SUBTYPE_SELECT, TASK_TYPE_SELECT} from "../../models/task";
 import {SUPPLIER_TYPE_SELECT} from "../../models/supplier";
 
 @connect(
@@ -117,7 +117,7 @@ class CreateForm extends React.Component<any> {
                                 message: 'Please input the subtype!',
                             },
                         ],
-                    })(<Input />)}
+                    })(TASK_SUBTYPE_SELECT)}
                 </Form.Item>
                 <Form.Item label="任务描述">
                     {getFieldDecorator('description', {
