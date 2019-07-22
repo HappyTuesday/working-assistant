@@ -121,12 +121,7 @@ class CreateForm extends React.Component<any> {
                 </Form.Item>
                 <Form.Item label="备注">
                     {getFieldDecorator('description', {
-                        rules: [
-                            {
-                                required: true,
-                                message: 'Please input the description!',
-                            },
-                        ],
+                        rules: [],
                     })(<Input />)}
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
