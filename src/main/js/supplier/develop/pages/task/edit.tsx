@@ -155,7 +155,7 @@ class EditForm extends React.Component<EditFormProps & {history, loginAccount}, 
                         ],
                     })(TASK_TYPE_SELECT)}
                 </Form.Item>
-                <Form.Item label="任务子类型">
+                <Form.Item label="品类">
                     {getFieldDecorator('subtype', {
                         initialValue: task.subtype,
                         rules: [
@@ -166,15 +166,10 @@ class EditForm extends React.Component<EditFormProps & {history, loginAccount}, 
                         ],
                     })(TASK_SUBTYPE_SELECT)}
                 </Form.Item>
-                <Form.Item label="任务描述">
+                <Form.Item label="备注">
                     {getFieldDecorator('description', {
                         initialValue: task.description,
-                        rules: [
-                            {
-                                required: true,
-                                message: 'Please input the description!',
-                            },
-                        ],
+                        rules: [],
                     })(<Input />)}
                 </Form.Item>
                 <Form.Item label="任务是否已完成">

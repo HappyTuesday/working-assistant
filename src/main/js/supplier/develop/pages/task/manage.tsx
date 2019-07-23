@@ -126,11 +126,11 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                 key: 'type',
                 filters: this.getFilter(tasks, 'type')
             }, {
-                title: '子类型',
+                title: '品类',
                 dataIndex: 'subtype',
                 key: 'subtype'
             }, {
-                title: '任务描述',
+                title: '备注',
                 dataIndex: 'description',
                 key: 'description'
             }, {
