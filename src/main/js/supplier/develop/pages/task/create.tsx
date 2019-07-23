@@ -99,16 +99,6 @@ class CreateForm extends React.Component<any> {
                         ],
                     })(SUPPLIER_TYPE_SELECT)}
                 </Form.Item>
-                <Form.Item label="任务类型">
-                    {getFieldDecorator('type', {
-                        rules: [
-                            {
-                                required: true,
-                                message: 'Please input the type!',
-                            },
-                        ],
-                    })(TASK_TYPE_SELECT)}
-                </Form.Item>
                 <Form.Item label="品类">
                     {getFieldDecorator('subtype', {
                         rules: [
@@ -118,6 +108,16 @@ class CreateForm extends React.Component<any> {
                             },
                         ],
                     })(TASK_SUBTYPE_SELECT)}
+                </Form.Item>
+                <Form.Item label="任务类型">
+                    {getFieldDecorator('type', {
+                        rules: [
+                            {
+                                required: true,
+                                message: 'Please input the type!',
+                            },
+                        ],
+                    })(TASK_TYPE_SELECT)}
                 </Form.Item>
                 <Form.Item label="备注">
                     {getFieldDecorator('description', {

@@ -17,17 +17,6 @@ module.exports = {
             filename: 'index.html'
         })
     ],
-    optimization: {
-        runtimeChunk: "single",
-        splitChunks: {
-            cacheGroups: {
-                vendor: {
-                    test: /[\\/]node_modules[\\/]/,
-                    name: 'vendors'
-                }
-            }
-        }
-    },
     module: {
         rules: [
             {

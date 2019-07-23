@@ -64,13 +64,13 @@ class TaskList extends React.Component<{loginAccount?}> {
             dataIndex: 'supplierType',
             key: 'supplierType'
         }, {
-            title: '任务类型',
-            dataIndex: 'type',
-            key: 'type'
-        }, {
             title: '品类',
             dataIndex: 'subtype',
             key: 'subtype'
+        }, {
+            title: '任务类型',
+            dataIndex: 'type',
+            key: 'type'
         }, {
             title: '备注',
             dataIndex: 'description',

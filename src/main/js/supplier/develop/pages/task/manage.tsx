@@ -1,13 +1,17 @@
 import React from 'react'
 import { Link } from "react-router-dom";
-import {Table, Button, Popconfirm, Divider, Switch, Icon} from "antd";
-import {request} from "../../../../request";
+import {Table, Button, Popconfirm, Divider, Switch, Icon, DatePicker, Input} from "antd";
+import {collectRequestParams, request} from "../../../../request";
 import {TaskDetailDrawerLink} from "./detail";
 import {ProgressLabel} from "./progress";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
 import dateFormat from "dateformat"
 import {unique} from "../../../../lambda";
+import moment from 'moment';
+import {Moment} from 'moment';
+const {Search} = Input;
+const { MonthPicker } = DatePicker;
 
 @connect(
     state => ({
@@ -17,9 +21,12 @@ import {unique} from "../../../../lambda";
 class TaskManageList extends React.Component<{loginAccount?}> {
 
     state = {
-        tasks: null,
+        tasks: undefined,
         loading: true,
-        onlyFinishedTasks: false
+        onlyFinishedTasks: false,
+        startDoneTime: undefined,
+        endDoneTime: undefined,
+        searchKey: undefined
     };
 
     componentDidMount(): void {
@@ -27,10 +34,14 @@ class TaskManageList extends React.Component<{loginAccount?}> {
     }
 
     getQueryParams() {
-        let params = [
-            "done=" + this.state.onlyFinishedTasks
-        ];
-        return params.join("&");
+        let {onlyFinishedTasks, startDoneTime, endDoneTime, searchKey} = this.state;
+
+        return collectRequestParams({
+            done: onlyFinishedTasks,
+            startDoneTime,
+            endDoneTime,
+            key: searchKey
+        }).join('&')
     }
 
     fetchTasks() {
@@ -67,8 +78,11 @@ class TaskManageList extends React.Component<{loginAccount?}> {
     }
 
     getFilter(tasks, field) {
-        return unique(tasks.map(t => t[field]))
-            .map(t => ({text: t, value: t}))
+        let keys = unique(tasks.map(t => field(t)));
+        return {
+            filters: keys.map(t => ({text: t, value: t})),
+            onFilter: (value, record) => value === field(record)
+        }
     }
 
     get columns() {
@@ -104,31 +118,31 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                         </TaskDetailDrawerLink>
                     </span>
                 )
-            },
-            {
+            }, {
                 title: '负责人',
                 dataIndex: 'owner.name',
                 key: 'owner.name',
-                filters: this.getFilter(tasks, 'owner.name')
+                ...this.getFilter(tasks, t => t.owner.name)
             }, {
                 title: '供应商全称',
                 dataIndex: 'supplierName',
                 key: 'supplierName',
-                filters: this.getFilter(tasks, 'supplierName')
+                ...this.getFilter(tasks, t => t.supplierName)
             }, {
                 title: '供应商类型',
                 dataIndex: 'supplierType',
                 key: 'supplierType',
-                filters: this.getFilter(tasks, 'supplierType')
+                ...this.getFilter(tasks, t => t.supplierType)
+            }, {
+                title: '品类',
+                dataIndex: 'subtype',
+                key: 'subtype',
+                ...this.getFilter(tasks, t => t.subtype)
             }, {
                 title: '任务类型',
                 dataIndex: 'type',
                 key: 'type',
-                filters: this.getFilter(tasks, 'type')
-            }, {
-                title: '品类',
-                dataIndex: 'subtype',
-                key: 'subtype'
+                ...this.getFilter(tasks, t => t.type)
             }, {
                 title: '备注',
                 dataIndex: 'description',
@@ -179,14 +193,38 @@ class TaskManageList extends React.Component<{loginAccount?}> {
         ];
     }
 
-    toggleOnlyFinishedTasks = checked => {
+    executeQuery(criteria) {
         this.setState({
-            loading: true,
-            onlyFinishedTasks: checked
+            ...criteria,
+            loading: true
         }, () => this.fetchTasks());
+    }
+
+    toggleOnlyFinishedTasks = checked => {
+        this.executeQuery({onlyFinishedTasks: checked});
+    };
+
+    setDoneTimeMonth = (time: Moment) => {
+        this.executeQuery(this.monthToDoneTime(time));
+    };
+
+    monthToDoneTime(time: Moment) {
+        let month = moment([time.year(), time.month()]);
+        return {
+            startDoneTime: month.toDate().getTime(),
+            endDoneTime: month.add(1, "month").toDate().getTime()
+        }
+    }
+
+    setSearchKey = value => {
+        this.executeQuery({
+            searchKey: value
+        })
     };
 
     render() {
+        let {onlyFinishedTasks} = this.state;
+
         return (
             <div>
                 <h2>任务管理</h2>
@@ -198,11 +236,15 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                     </Link>
                     <label style={{marginLeft: "1em"}}>
                         <Switch
-                            defaultChecked={this.state.onlyFinishedTasks}
+                            defaultChecked={onlyFinishedTasks}
                             onChange={this.toggleOnlyFinishedTasks}
                         />
                         仅已完成任务
                     </label>
+                    {onlyFinishedTasks && (
+                        <MonthPicker style={{marginLeft: "1em"}} placeholder="选择月份" onChange={this.setDoneTimeMonth}/>
+                    )}
+                    <Search placeholder="按关键字查询" onSearch={this.setSearchKey} style={{ width: "12em", marginLeft: "1em" }} />
                     <a href={"/api/supplier/develop/tasks/excel?" + this.getQueryParams()}
                        style={{marginLeft: "1em"}}
                        title="导出"

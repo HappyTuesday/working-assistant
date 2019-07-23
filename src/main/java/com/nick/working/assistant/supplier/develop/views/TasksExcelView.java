@@ -32,8 +32,8 @@ public class TasksExcelView extends AbstractXlsxView {
         header.createCell(1).setCellValue("负责人");
         header.createCell(2).setCellValue("供应商全称");
         header.createCell(3).setCellValue("供应商类型");
-        header.createCell(4).setCellValue("任务类型");
-        header.createCell(5).setCellValue("品类");
+        header.createCell(4).setCellValue("品类");
+        header.createCell(5).setCellValue("任务类型");
         header.createCell(6).setCellValue("备注");
         header.createCell(7).setCellValue("昨日进度");
         header.createCell(8).setCellValue("当前进度");
@@ -47,8 +47,8 @@ public class TasksExcelView extends AbstractXlsxView {
             row.createCell(1).setCellValue(task.getOwner().getName());
             row.createCell(2).setCellValue(task.getSupplierName());
             row.createCell(3).setCellValue(task.getSupplierType());
-            row.createCell(4).setCellValue(task.getType());
-            row.createCell(5).setCellValue(task.getSubtype());
+            row.createCell(4).setCellValue(task.getSubtype());
+            row.createCell(5).setCellValue(task.getType());
             row.createCell(6).setCellValue(task.getDescription());
             Progress py = task.getStatusOfYesterday();
             if (py != null) {

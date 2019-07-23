@@ -6,6 +6,7 @@ import com.nick.working.assistant.supplier.develop.dto.UserDTO;
 import com.nick.working.assistant.supplier.develop.models.Progress;
 import com.nick.working.assistant.supplier.develop.models.Task;
 import com.nick.working.assistant.supplier.develop.models.TaskDetail;
+import com.nick.working.assistant.supplier.develop.query.TaskQueryCriteria;
 import com.nick.working.assistant.supplier.develop.repositories.ProgressRepository;
 import com.nick.working.assistant.supplier.develop.repositories.TaskRepository;
 import com.nick.working.assistant.supplier.develop.repositories.UserRepository;
@@ -34,13 +35,8 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> findAll(boolean done, String owner) {
-        Iterable<TaskDTO> iterable;
-        if (owner != null) {
-            iterable = repository.findAllByOwnerNameAndDone(owner, done);
-        } else {
-            iterable = repository.findAllByDone(done);
-        }
+    public List<Task> findAll(TaskQueryCriteria criteria) {
+        Iterable<TaskDTO> iterable = repository.findAll(criteria.toWhereClause());
 
         List<Task> list = new ArrayList<>();
         for (TaskDTO dto : iterable) {
@@ -50,8 +46,8 @@ public class TaskController {
     }
 
     @GetMapping("excel")
-    public ModelAndView exportAllToExcel(boolean done, String owner) {
-        return new ModelAndView("tasksExcelView", Collections.singletonMap("tasks", findAll(done, owner)));
+    public ModelAndView exportAllToExcel(TaskQueryCriteria criteria) {
+        return new ModelAndView("tasksExcelView", Collections.singletonMap("tasks", findAll(criteria)));
     }
 
     @GetMapping("{id}")

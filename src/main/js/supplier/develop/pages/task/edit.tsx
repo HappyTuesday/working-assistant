@@ -144,17 +144,6 @@ class EditForm extends React.Component<EditFormProps & {history, loginAccount}, 
                         ],
                     })(SUPPLIER_TYPE_SELECT)}
                 </Form.Item>
-                <Form.Item label="任务类型">
-                    {getFieldDecorator('type', {
-                        initialValue: task.type,
-                        rules: [
-                            {
-                                required: true,
-                                message: 'Please input the type!',
-                            },
-                        ],
-                    })(TASK_TYPE_SELECT)}
-                </Form.Item>
                 <Form.Item label="品类">
                     {getFieldDecorator('subtype', {
                         initialValue: task.subtype,
@@ -165,6 +154,17 @@ class EditForm extends React.Component<EditFormProps & {history, loginAccount}, 
                             },
                         ],
                     })(TASK_SUBTYPE_SELECT)}
+                </Form.Item>
+                <Form.Item label="任务类型">
+                    {getFieldDecorator('type', {
+                        initialValue: task.type,
+                        rules: [
+                            {
+                                required: true,
+                                message: 'Please input the type!',
+                            },
+                        ],
+                    })(TASK_TYPE_SELECT)}
                 </Form.Item>
                 <Form.Item label="备注">
                     {getFieldDecorator('description', {

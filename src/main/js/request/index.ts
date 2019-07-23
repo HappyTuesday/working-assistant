@@ -7,11 +7,11 @@ function showError(message: string) {
     });
 }
 
-function collectParams(param, name = undefined): string[] {
+export function collectRequestParams(param, name = undefined): string[] {
     if (param instanceof Array) {
         let ps = [];
         for (let v of param) {
-            ps.push(...collectParams(v, name));
+            ps.push(...collectRequestParams(v, name));
         }
         return ps;
     }
@@ -19,7 +19,7 @@ function collectParams(param, name = undefined): string[] {
         let ps = [];
         for (let key in param) {
             if (param.hasOwnProperty(key)) {
-                ps.push(...collectParams(param[key], name ? name + '.' + key : key));
+                ps.push(...collectRequestParams(param[key], name ? name + '.' + key : key));
             }
         }
         return ps;
@@ -34,7 +34,7 @@ function collectParams(param, name = undefined): string[] {
 }
 
 export function request({url, method = 'GET', params = {}}, callback: (result: any) => void) {
-    let ps = collectParams(params);
+    let ps = collectRequestParams(params);
 
     fetch(url, {
         method: method,

@@ -34,7 +34,7 @@ class ProgressForm extends React.Component<FormComponentProps & {taskId?, loginA
                 author: this.props.loginAccount.name
             }
         }, () => {
-            message.info(`任务#${taskId}的进度汇报成功`);
+            message.info("进度汇报成功");
 
             let {onCommitted} = this.props;
             if (onCommitted) {
@@ -105,7 +105,7 @@ class TaskDetail extends React.Component<{taskId, size?}> {
                     </span>
                 }
             />
-        )).reverse();
+        ));
 
         return (
             <Steps direction="vertical" size="small" current={steps.length}>
@@ -130,8 +130,8 @@ class TaskDetail extends React.Component<{taskId, size?}> {
                     <Descriptions.Item label="负责人">{task.owner.name}</Descriptions.Item>
                     <Descriptions.Item label="供应商全称">{task.supplierName}</Descriptions.Item>
                     <Descriptions.Item label="供应商类型">{task.supplierType}</Descriptions.Item>
-                    <Descriptions.Item label="任务类型">{task.type}</Descriptions.Item>
                     <Descriptions.Item label="品类">{task.subtype}</Descriptions.Item>
+                    <Descriptions.Item label="任务类型">{task.type}</Descriptions.Item>
                     <Descriptions.Item label="备注">{task.description}</Descriptions.Item>
                     <Descriptions.Item label="是否已完成">{task.done ? '已完成' : '未完成'}</Descriptions.Item>
                     {task.doneTime && (
@@ -140,9 +140,9 @@ class TaskDetail extends React.Component<{taskId, size?}> {
                         </Descriptions.Item>
                     )}
                 </Descriptions>
-                {this.renderHistory()}
-                {form && <Divider/>}
                 {form}
+                {form && <Divider/>}
+                {this.renderHistory()}
             </div>
         )
     }
