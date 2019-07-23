@@ -42,15 +42,17 @@ class TaskList extends React.Component<{loginAccount?}> {
 
     columns = [
         {
-            title: "任务编号",
+            title: "序号",
             dataIndex: 'id',
             key: 'id',
-            render: id => (
-                <TaskDetailDrawerLink
-                    taskId={id}
-                    onClosed={() => this.fetchTasks()}>
-                    #{id}
-                </TaskDetailDrawerLink>
+            render: (id, record, index) => (
+                <span>
+                    <TaskDetailDrawerLink
+                        taskId={id}
+                        onClosed={() => this.fetchTasks()}>
+                        {index + 1}
+                    </TaskDetailDrawerLink>
+                </span>
             )
         },
         {
@@ -117,7 +119,7 @@ class TaskList extends React.Component<{loginAccount?}> {
                     rowKey="id"
                     dataSource={this.state.tasks}
                     columns={this.columns}
-                    pagination={{size: "100"}}
+                    pagination={{pageSize: 100}}
                 />
             </div>
         )

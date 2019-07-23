@@ -7,6 +7,7 @@ import {ProgressLabel} from "./progress";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
 import dateFormat from "dateformat"
+import {unique} from "../../../../lambda";
 
 @connect(
     state => ({
@@ -65,10 +66,17 @@ class TaskManageList extends React.Component<{loginAccount?}> {
         });
     }
 
+    getFilter(tasks, field) {
+        return unique(tasks.map(t => t[field]))
+            .map(t => ({text: t, value: t}))
+    }
+
     get columns() {
 
         let doneTimeColumns = [];
         let {onlyFinishedTasks} = this.state;
+
+        let {tasks = []} = this.state;
 
         if (onlyFinishedTasks) {
             doneTimeColumns.push(
@@ -76,6 +84,7 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                     title: '完成时间',
                     dataIndex: 'doneTime',
                     key: 'doneTime',
+                    sorter: (x, y) => x.doneTime - y.doneTime,
                     render: doneTime => dateFormat(doneTime, "yyyy/mm/dd HH:MM")
                 }
             )
@@ -83,35 +92,39 @@ class TaskManageList extends React.Component<{loginAccount?}> {
 
         return [
             {
-                title: "任务编号",
+                title: "序号",
                 dataIndex: 'id',
                 key: 'id',
-                render: id => (
+                render: (id, record, index) => (
                     <span>
-                    <TaskDetailDrawerLink
-                        taskId={id}
-                        onClosed={() => this.fetchTasks()}>
-                        #{id}
-                    </TaskDetailDrawerLink>
-                </span>
+                        <TaskDetailDrawerLink
+                            taskId={id}
+                            onClosed={() => this.fetchTasks()}>
+                            {index + 1}
+                        </TaskDetailDrawerLink>
+                    </span>
                 )
             },
             {
                 title: '负责人',
                 dataIndex: 'owner.name',
-                key: 'owner'
+                key: 'owner.name',
+                filters: this.getFilter(tasks, 'owner.name')
             }, {
                 title: '供应商全称',
                 dataIndex: 'supplierName',
-                key: 'supplierName'
+                key: 'supplierName',
+                filters: this.getFilter(tasks, 'supplierName')
             }, {
                 title: '供应商类型',
                 dataIndex: 'supplierType',
-                key: 'supplierType'
+                key: 'supplierType',
+                filters: this.getFilter(tasks, 'supplierType')
             }, {
                 title: '任务类型',
                 dataIndex: 'type',
-                key: 'type'
+                key: 'type',
+                filters: this.getFilter(tasks, 'type')
             }, {
                 title: '子类型',
                 dataIndex: 'subtype',
@@ -203,7 +216,7 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                     rowKey="id"
                     dataSource={this.state.tasks}
                     columns={this.columns}
-                    pagination={{size: "100"}}
+                    pagination={{pageSize: 100}}
                 />
             </div>
         )

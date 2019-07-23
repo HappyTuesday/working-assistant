@@ -126,7 +126,7 @@ class TaskDetail extends React.Component<{taskId, size?}> {
 
         return (
             <div>
-                <Descriptions title={`任务 #${task.id}`} column={size === 'small' ? 1 : 3} layout="horizontal">
+                <Descriptions title="任务详细信息" column={size === 'small' ? 1 : 3} layout="horizontal">
                     <Descriptions.Item label="负责人">{task.owner.name}</Descriptions.Item>
                     <Descriptions.Item label="供应商全称">{task.supplierName}</Descriptions.Item>
                     <Descriptions.Item label="供应商类型">{task.supplierType}</Descriptions.Item>

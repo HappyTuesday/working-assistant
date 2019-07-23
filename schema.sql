@@ -23,7 +23,7 @@ create table supplier_develop_task
   subtype varchar(64) null,
   description varchar(256) null,
   done bool not null,
-  done_time date null,
+  done_time datetime null,
   constraint supplier_develop_task_pk
     primary key (id)
 );
@@ -35,7 +35,7 @@ create table supplier_develop_progress
   author_id int not null,
   content varchar(64) not null,
   comment varchar(256) null,
-  timestamp date not null,
+  timestamp datetime not null,
   constraint supplier_develop_progress_pk
     primary key (id)
 );
