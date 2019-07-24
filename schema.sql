@@ -22,7 +22,8 @@ create table supplier_develop_task
   type varchar(64) not null,
   subtype varchar(64) null,
   description varchar(256) null,
-  done bool not null,
+  taskStatus varchar(16) not null,
+  transitTime datetime null,
   done_time datetime null,
   constraint supplier_develop_task_pk
     primary key (id)

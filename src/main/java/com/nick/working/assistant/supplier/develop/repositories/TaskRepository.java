@@ -12,9 +12,4 @@ import java.util.Date;
 import java.util.List;
 
 public interface TaskRepository extends PagingAndSortingRepository<TaskDTO, Integer>, JpaSpecificationExecutor<TaskDTO> {
-    Iterable<TaskDTO> findAllByDone(boolean done);
-
-    Iterable<TaskDTO> findAllByOwnerName(String owner);
-
-    Iterable<TaskDTO> findAllByOwnerNameAndDone(String owner, boolean done);
 }

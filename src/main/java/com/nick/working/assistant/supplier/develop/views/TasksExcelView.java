@@ -37,8 +37,8 @@ public class TasksExcelView extends AbstractXlsxView {
         header.createCell(6).setCellValue("备注");
         header.createCell(7).setCellValue("昨日进度");
         header.createCell(8).setCellValue("当前进度");
-        header.createCell(9).setCellValue("是否已结束");
-        header.createCell(10).setCellValue("结束时间");
+        header.createCell(9).setCellValue("状态");
+        header.createCell(10).setCellValue("状态切换时间");
 
         for (int i = 0; i < tasks.size(); i++) {
             Task task = tasks.get(i);
@@ -58,10 +58,8 @@ public class TasksExcelView extends AbstractXlsxView {
             if (pt != null) {
                 row.createCell(8).setCellValue(pt.getContent());
             }
-            row.createCell(9).setCellValue(task.isDone() ? "是" : "否");
-            if (task.getDoneTime() != null) {
-                row.createCell(10).setCellValue(DATE_FORMAT_IN_MINUTES.format(task.getDoneTime()));
-            }
+            row.createCell(9).setCellValue(task.getTaskStatus().getTitle());
+            row.createCell(10).setCellValue(DATE_FORMAT_IN_MINUTES.format(task.getTransitTime()));
         }
 
         httpServletResponse.setHeader("Content-Disposition", "attachment; filename=tasks.xlsx");

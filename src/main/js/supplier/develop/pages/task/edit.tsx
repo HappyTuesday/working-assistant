@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
-import {Checkbox, message, Skeleton} from "antd";
+import {Radio, message, Skeleton} from "antd";
 import {request} from "../../../../request";
 import { connect } from "react-redux";
 
@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import {FormComponentProps} from "antd/lib/form";
 import {UserSelect} from "../user";
-import {TASK_SUBTYPE_SELECT, TASK_TYPE_SELECT} from "../../models/task";
+import {renderTaskStatusRadio, TASK_SUBTYPE_SELECT, TASK_TYPE_SELECT, TaskStatus} from "../../models/task";
 import {SUPPLIER_TYPE_SELECT} from "../../models/supplier";
 
 interface EditFormProps extends FormComponentProps {
@@ -172,10 +172,10 @@ class EditForm extends React.Component<EditFormProps & {history, loginAccount}, 
                         rules: [],
                     })(<Input />)}
                 </Form.Item>
-                <Form.Item label="任务是否已完成">
-                    {getFieldDecorator('done', {
-                        initialValue: task.done
-                    })(<Checkbox defaultChecked={task.done}/>)}
+                <Form.Item label="任务状态">
+                    {getFieldDecorator('taskStatus', {
+                        initialValue: task.taskStatus
+                    })(renderTaskStatusRadio())}
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit" icon="save">
@@ -202,7 +202,7 @@ export class EditTaskPage extends React.Component<{match}> {
         let taskId = this.props.match.params.taskId;
         return (
             <div>
-                <h2>编辑任务 #{taskId}</h2>
+                <h2>编辑任务</h2>
                 <WrappedEditForm taskId={taskId}/>
             </div>
         )

@@ -4,6 +4,7 @@ import {request} from "../../../../request";
 import { connect } from "react-redux";
 import {FormComponentProps} from "antd/lib/form";
 import dateFormat from "dateformat"
+import {showTaskStatus, showTransitTimeTitle, TaskStatus} from "../../models/task";
 
 const { Step } = Steps;
 
@@ -118,7 +119,7 @@ class TaskDetail extends React.Component<{taskId, size?}> {
         let {detail: {task}} = this.state;
 
         let form;
-        if (!task.done) {
+        if (task.taskStatus === TaskStatus.ACTIVE) {
             form = <WrappedProgressForm taskId={task.id} onCommitted={() => this.fetchTaskDetail()}/>
         }
 
@@ -126,19 +127,17 @@ class TaskDetail extends React.Component<{taskId, size?}> {
 
         return (
             <div>
-                <Descriptions title="任务详细信息" column={size === 'small' ? 1 : 3} layout="horizontal">
+                <Descriptions column={size === 'small' ? 1 : 3} layout="horizontal">
                     <Descriptions.Item label="负责人">{task.owner.name}</Descriptions.Item>
                     <Descriptions.Item label="供应商全称">{task.supplierName}</Descriptions.Item>
                     <Descriptions.Item label="供应商类型">{task.supplierType}</Descriptions.Item>
                     <Descriptions.Item label="品类">{task.subtype}</Descriptions.Item>
                     <Descriptions.Item label="任务类型">{task.type}</Descriptions.Item>
                     <Descriptions.Item label="备注">{task.description}</Descriptions.Item>
-                    <Descriptions.Item label="是否已完成">{task.done ? '已完成' : '未完成'}</Descriptions.Item>
-                    {task.doneTime && (
-                        <Descriptions.Item label="任务完成时间">
-                            {dateFormat(task.doneTime, "yyyy/mm/dd HH:MM")}
-                        </Descriptions.Item>
-                    )}
+                    <Descriptions.Item label="任务状态">{showTaskStatus(task.taskStatus)}</Descriptions.Item>
+                    <Descriptions.Item label={showTransitTimeTitle(task.taskStatus)}>
+                        {dateFormat(task.transitTime, "yyyy/mm/dd HH:MM")}
+                    </Descriptions.Item>
                 </Descriptions>
                 {form}
                 {form && <Divider/>}

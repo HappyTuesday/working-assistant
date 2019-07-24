@@ -6,6 +6,7 @@ import com.nick.working.assistant.supplier.develop.dto.UserDTO;
 import com.nick.working.assistant.supplier.develop.models.Progress;
 import com.nick.working.assistant.supplier.develop.models.Task;
 import com.nick.working.assistant.supplier.develop.models.TaskDetail;
+import com.nick.working.assistant.supplier.develop.models.TaskStatus;
 import com.nick.working.assistant.supplier.develop.query.TaskQueryCriteria;
 import com.nick.working.assistant.supplier.develop.repositories.ProgressRepository;
 import com.nick.working.assistant.supplier.develop.repositories.TaskRepository;
@@ -92,8 +93,8 @@ public class TaskController {
 
         TaskDTO dto = task.toDTO();
         dto.setOwner(getUserDTO(task.getOwner().getName()));
-        dto.setDone(false);
-        dto.setDoneTime(null);
+        dto.setTaskStatus(TaskStatus.ACTIVE);
+        dto.setTransitTime(new Date());
 
         return repository.save(dto).getId();
     }
@@ -114,16 +115,15 @@ public class TaskController {
         dto.setType(task.getType());
         dto.setSubtype(task.getSubtype());
         dto.setDescription(task.getDescription());
-        dto.setDone(task.isDone());
         dto.setOwner(getUserDTO(task.getOwner().getName()));
 
-        if (task.isDone()) {
-            if (dto.getDoneTime() == null) {
-                dto.setDoneTime(new Date());
+        if (task.getTaskStatus() != null) {
+            if (task.getTaskStatus() != dto.getTaskStatus()) {
+                dto.setTaskStatus(task.getTaskStatus());
+                dto.setTransitTime(new Date());
             }
-        } else {
-            dto.setDoneTime(null);
         }
+
         repository.save(dto);
     }
 
@@ -132,7 +132,7 @@ public class TaskController {
         Optional<TaskDTO> result = repository.findById(taskId);
         if (result.isPresent()) {
             TaskDTO task = result.get();
-            if (task.isDone()) {
+            if (task.getTaskStatus() != TaskStatus.ACTIVE) {
                 throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "task already done");
             }
             ProgressDTO progress = new ProgressDTO();
@@ -153,12 +153,21 @@ public class TaskController {
 
     @PostMapping("finish/{taskId}")
     public void finishTask(@PathVariable int taskId) {
+        transitTo(taskId, TaskStatus.FINISHED);
+    }
+
+    @PostMapping("cancel/{taskId}")
+    public void cancelTask(@PathVariable int taskId) {
+        transitTo(taskId, TaskStatus.CANCELED);
+    }
+
+    private void transitTo(int taskId, TaskStatus target) {
         Optional<TaskDTO> result = repository.findById(taskId);
         if (result.isPresent()) {
             TaskDTO dto = result.get();
-            if (!dto.isDone()) {
-                dto.setDone(true);
-                dto.setDoneTime(new Date());
+            if (dto.getTaskStatus() != target) {
+                dto.setTaskStatus(target);
+                dto.setTransitTime(new Date());
                 repository.save(dto);
             }
         } else {

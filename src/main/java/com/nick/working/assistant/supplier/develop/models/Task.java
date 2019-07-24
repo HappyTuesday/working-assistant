@@ -17,8 +17,8 @@ public class Task {
     private String type;
     private String subtype;
     private String description;
-    private boolean done;
-    private Date doneTime;
+    private TaskStatus taskStatus;
+    private Date transitTime;
     private Progress statusOfYesterday;
     private Progress statusOfToday;
 
@@ -32,8 +32,8 @@ public class Task {
         this.type = dto.getType();
         this.subtype = dto.getSubtype();
         this.description = dto.getDescription();
-        this.done = dto.isDone();
-        this.doneTime = dto.getDoneTime();
+        this.taskStatus = dto.getTaskStatus();
+        this.transitTime = dto.getTransitTime();
 
         if (!progresses.isEmpty()) {
             ProgressDTO p = progresses.get(0);
@@ -69,8 +69,8 @@ public class Task {
         dto.setType(type);
         dto.setSubtype(subtype);
         dto.setDescription(description);
-        dto.setDone(done);
-        dto.setDoneTime(doneTime);
+        dto.setTaskStatus(taskStatus);
+        dto.setTransitTime(transitTime);
         return dto;
     }
 }

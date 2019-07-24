@@ -1,10 +1,10 @@
 package com.nick.working.assistant.supplier.develop.dto;
 
+import com.nick.working.assistant.supplier.develop.models.TaskStatus;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @Entity(name = "supplier_develop_task")
@@ -20,6 +20,6 @@ public class TaskDTO {
     private String type;
     private String subtype;
     private String description;
-    private boolean done;
-    private Date doneTime;
+    private TaskStatus taskStatus;
+    private Date transitTime;
 }

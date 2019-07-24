@@ -1,17 +1,22 @@
 import React from 'react'
-import { Link } from "react-router-dom";
-import {Table, Button, Popconfirm, Divider, Switch, Icon, DatePicker, Input} from "antd";
+import {Link} from "react-router-dom";
+import {Button, Divider, Icon, Input, Popconfirm, Table} from "antd";
 import {collectRequestParams, request} from "../../../../request";
 import {TaskDetailDrawerLink} from "./detail";
 import {ProgressLabel} from "./progress";
-import { connect } from "react-redux";
-import { withRouter } from "react-router";
-import dateFormat from "dateformat"
+import {connect} from "react-redux";
+import {withRouter} from "react-router";
 import {unique} from "../../../../lambda";
-import moment from 'moment';
-import {Moment} from 'moment';
+import {
+    renderTaskStatusRadio,
+    renderTransitTimeRanger,
+    showTransitTimeTitle,
+    TaskStatus
+} from "../../models/task";
+import dateFormat from "dateformat"
+import {RangePickerValue} from "antd/lib/date-picker/interface";
+
 const {Search} = Input;
-const { MonthPicker } = DatePicker;
 
 @connect(
     state => ({
@@ -23,9 +28,9 @@ class TaskManageList extends React.Component<{loginAccount?}> {
     state = {
         tasks: undefined,
         loading: true,
-        onlyFinishedTasks: false,
-        startDoneTime: undefined,
-        endDoneTime: undefined,
+        taskStatus: TaskStatus.ACTIVE,
+        startTransitTime: undefined,
+        endTransitTime: undefined,
         searchKey: undefined
     };
 
@@ -34,13 +39,13 @@ class TaskManageList extends React.Component<{loginAccount?}> {
     }
 
     getQueryParams() {
-        let {onlyFinishedTasks, startDoneTime, endDoneTime, searchKey} = this.state;
+        let {taskStatus, startTransitTime, endTransitTime, searchKey} = this.state;
 
         return collectRequestParams({
-            done: onlyFinishedTasks,
-            startDoneTime,
-            endDoneTime,
-            key: searchKey
+            taskStatus,
+            startTransitTime,
+            endTransitTime,
+            searchKey
         }).join('&')
     }
 
@@ -66,11 +71,11 @@ class TaskManageList extends React.Component<{loginAccount?}> {
         });
     }
 
-    finishTask(id) {
+    transitTask(id, method: "finish" | "cancel") {
         this.setState({loading: true});
 
         request({
-            url: "/api/supplier/develop/tasks/finish/" + id,
+            url: "/api/supplier/develop/tasks/" + method + "/" + id,
             method: "POST"
         }, () => {
             this.fetchTasks()
@@ -86,24 +91,7 @@ class TaskManageList extends React.Component<{loginAccount?}> {
     }
 
     get columns() {
-
-        let doneTimeColumns = [];
-        let {onlyFinishedTasks} = this.state;
-
-        let {tasks = []} = this.state;
-
-        if (onlyFinishedTasks) {
-            doneTimeColumns.push(
-                {
-                    title: '完成时间',
-                    dataIndex: 'doneTime',
-                    key: 'doneTime',
-                    width: '12em',
-                    sorter: (x, y) => x.doneTime - y.doneTime,
-                    render: doneTime => dateFormat(doneTime, "yyyy/mm/dd HH:MM")
-                }
-            )
-        }
+        let {taskStatus, tasks = []} = this.state;
 
         return [
             {
@@ -164,23 +152,34 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                 dataIndex: 'statusOfToday',
                 key: 'statusOfToday',
                 render: p => p && <ProgressLabel progress={p}/>
-            },
-            ...doneTimeColumns,
-            {
+            }, {
+                title: showTransitTimeTitle(taskStatus),
+                dataIndex: 'transitTime',
+                key: 'transitTime',
+                width: '12em',
+                sorter: (x, y) => x.transitTime - y.transitTime,
+                render: transitTime => dateFormat(transitTime, "yyyy/mm/dd HH:MM")
+            }, {
                 title: '操作',
                 dataIndex: 'operation',
-                width: '10em',
+                width: taskStatus === TaskStatus.ACTIVE ? '12em' : '10em',
                 render: (text, record) => (
                     <div>
                         <Link to={"/supplier/develop/tasks/detail/" + record.id}>
                             <Icon type="menu-unfold" title="查看详情"/>
                         </Link>
-                        {!onlyFinishedTasks && (
+                        {taskStatus === TaskStatus.ACTIVE && (
                             <React.Fragment>
                                 <Divider type="vertical"/>
-                                <Popconfirm title="Sure to finish?" onConfirm={() => this.finishTask(record.id)}>
-                                    <a href="javascript:" title="将此任务标记为已完成">
+                                <Popconfirm title="确认要完成此任务吗?" onConfirm={() => this.transitTask(record.id, "finish")}>
+                                    <a href="javascript:" title="完成此任务">
                                         <Icon type="check"/>
+                                    </a>
+                                </Popconfirm>
+                                <Divider type="vertical"/>
+                                <Popconfirm title="确认要终止此任务吗?" onConfirm={() => this.transitTask(record.id, "cancel")}>
+                                    <a href="javascript:" title="终止此任务">
+                                        <Icon type="close"/>
                                     </a>
                                 </Popconfirm>
                             </React.Fragment>
@@ -189,12 +188,12 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                         <Link to={"/supplier/develop/tasks/edit/" + record.id}>
                             <Icon type="edit" title="编辑此任务"/>
                         </Link>
-                        <Divider type="vertical"/>
-                        <Popconfirm title="Sure to delete?" onConfirm={() => this.deleteTask(record.id)}>
-                            <a href="javascript:" title="删除此任务">
-                                <Icon type="delete"/>
-                            </a>
-                        </Popconfirm>
+                        {/*<Divider type="vertical"/>*/}
+                        {/*<Popconfirm title="确认要删除此任务吗?" onConfirm={() => this.deleteTask(record.id)}>*/}
+                            {/*<a href="javascript:" title="删除此任务">*/}
+                                {/*<Icon type="delete"/>*/}
+                            {/*</a>*/}
+                        {/*</Popconfirm>*/}
                     </div>
                 )
             }
@@ -208,33 +207,18 @@ class TaskManageList extends React.Component<{loginAccount?}> {
         }, () => this.fetchTasks());
     }
 
-    toggleOnlyFinishedTasks = checked => {
+    setTaskStatus = e => {
         this.executeQuery({
-            onlyFinishedTasks: checked,
-            ...(checked ? {} : {
-                startDoneTime: undefined, endDoneTime: undefined
-            })
+            taskStatus: e.target.value
         });
     };
 
-    setDoneTimeMonth = (time: Moment) => {
-        this.executeQuery(this.monthToDoneTime(time));
+    setTransitTimeRangeOfDay = ([start, end]: RangePickerValue) => {
+        this.executeQuery({
+            startTransitTime: start ? start.toDate().getTime() : undefined,
+            endTransitTime: end ? end.add(1, 'day').toDate().getTime() : undefined,
+        });
     };
-
-    monthToDoneTime(time: Moment) {
-        if (time) {
-            let month = moment([time.year(), time.month()]);
-            return {
-                startDoneTime: month.toDate().getTime(),
-                endDoneTime: month.add(1, "month").toDate().getTime()
-            }
-        } else {
-            return {
-                startDoneTime: undefined,
-                endDoneTime: undefined
-            }
-        }
-    }
 
     setSearchKey = value => {
         this.executeQuery({
@@ -243,7 +227,7 @@ class TaskManageList extends React.Component<{loginAccount?}> {
     };
 
     render() {
-        let {onlyFinishedTasks} = this.state;
+        let {taskStatus} = this.state;
 
         return (
             <div>
@@ -254,17 +238,22 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                             添加新任务
                         </Button>
                     </Link>
-                    <label style={{marginLeft: "1em"}}>
-                        <Switch
-                            defaultChecked={onlyFinishedTasks}
-                            onChange={this.toggleOnlyFinishedTasks}
-                        />
-                        仅已完成任务
-                    </label>
-                    {onlyFinishedTasks && (
-                        <MonthPicker style={{marginLeft: "1em"}} placeholder="选择月份" onChange={this.setDoneTimeMonth}/>
-                    )}
-                    <Search placeholder="按关键字查询" onSearch={this.setSearchKey} style={{ width: "12em", marginLeft: "1em" }} />
+
+                    {renderTaskStatusRadio({
+                        defaultValue: taskStatus,
+                        onChange: this.setTaskStatus,
+                        style: {marginLeft: "1em"}
+                    })}
+
+                    <Search placeholder="按关键字查询"
+                            onSearch={this.setSearchKey}
+                            style={{ width: "12em", marginLeft: "1em" }} />
+
+                    {renderTransitTimeRanger({
+                        onChange: this.setTransitTimeRangeOfDay,
+                        style: {marginLeft: "1em"}
+                    })}
+
                     <a href={"/api/supplier/develop/tasks/excel?" + this.getQueryParams()}
                        style={{marginLeft: "1em"}}
                        title="导出"
