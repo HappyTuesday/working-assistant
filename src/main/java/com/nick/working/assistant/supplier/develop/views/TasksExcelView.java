@@ -28,7 +28,7 @@ public class TasksExcelView extends AbstractXlsxView {
         sheet.setFitToPage(true);
 
         Row header = sheet.createRow(0);
-        header.createCell(0).setCellValue("任务编号");
+        header.createCell(0).setCellValue("序号");
         header.createCell(1).setCellValue("负责人");
         header.createCell(2).setCellValue("供应商全称");
         header.createCell(3).setCellValue("供应商类型");
@@ -43,7 +43,7 @@ public class TasksExcelView extends AbstractXlsxView {
         for (int i = 0; i < tasks.size(); i++) {
             Task task = tasks.get(i);
             Row row = sheet.createRow(i + 1);
-            row.createCell(0).setCellValue("#" + task.getId());
+            row.createCell(0).setCellValue(i + 1);
             row.createCell(1).setCellValue(task.getOwner().getName());
             row.createCell(2).setCellValue(task.getSupplierName());
             row.createCell(3).setCellValue(task.getSupplierType());

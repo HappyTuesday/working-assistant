@@ -111,12 +111,12 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                 dataIndex: 'id',
                 key: 'id',
                 width: '4em',
-                render: (id, record, index) => (
+                render: (id, record) => (
                     <span>
                         <TaskDetailDrawerLink
                             taskId={id}
                             onClosed={() => this.fetchTasks()}>
-                            {index + 1}
+                            {tasks.indexOf(record) + 1}
                         </TaskDetailDrawerLink>
                     </span>
                 )

@@ -40,58 +40,63 @@ class TaskList extends React.Component<{loginAccount?}> {
         })
     }
 
-    columns = [
-        {
-            title: "序号",
-            dataIndex: 'id',
-            key: 'id',
-            width: '4em',
-            render: (id, record, index) => (
-                <span>
-                    <TaskDetailDrawerLink
-                        taskId={id}
-                        onClosed={() => this.fetchTasks()}>
-                        {index + 1}
-                    </TaskDetailDrawerLink>
-                </span>
-            )
-        },
-        {
-            title: '供应商全称',
-            dataIndex: 'supplierName',
-            key: 'supplierName',
-            width: '10em',
-        }, {
-            title: '供应商类型',
-            dataIndex: 'supplierType',
-            key: 'supplierType',
-            width: '8em',
-        }, {
-            title: '品类',
-            dataIndex: 'subtype',
-            key: 'subtype',
-            width: '8em',
-        }, {
-            title: '任务类型',
-            dataIndex: 'type',
-            key: 'type',
-            width: '8em',
-        }, {
-            title: '备注',
-            dataIndex: 'description',
-            key: 'description'
-        }, {
-            title: '昨日进度',
-            dataIndex: 'statusOfYesterday',
-            key: 'statusOfYesterday',
-            render: p => p && <ProgressLabel progress={p}/>
-        }, {
-            title: '当前进度',
-            dataIndex: 'statusOfToday',
-            key: 'statusOfToday',
-            render: p => p && <ProgressLabel progress={p}/>
-        }
-    ];
+    get columns() {
+
+        let {tasks = []} = this.state;
+
+        return [
+            {
+                title: "序号",
+                dataIndex: 'id',
+                key: 'id',
+                width: '4em',
+                render: (id, record) => (
+                    <span>
+                        <TaskDetailDrawerLink
+                            taskId={id}
+                            onClosed={() => this.fetchTasks()}>
+                            {tasks.indexOf(record) + 1}
+                        </TaskDetailDrawerLink>
+                    </span>
+                )
+            },
+            {
+                title: '供应商全称',
+                dataIndex: 'supplierName',
+                key: 'supplierName',
+                width: '10em',
+            }, {
+                title: '供应商类型',
+                dataIndex: 'supplierType',
+                key: 'supplierType',
+                width: '8em',
+            }, {
+                title: '品类',
+                dataIndex: 'subtype',
+                key: 'subtype',
+                width: '8em',
+            }, {
+                title: '任务类型',
+                dataIndex: 'type',
+                key: 'type',
+                width: '8em',
+            }, {
+                title: '备注',
+                dataIndex: 'description',
+                key: 'description'
+            }, {
+                title: '昨日进度',
+                dataIndex: 'statusOfYesterday',
+                key: 'statusOfYesterday',
+                render: p => p && <ProgressLabel progress={p}/>
+            }, {
+                title: '当前进度',
+                dataIndex: 'statusOfToday',
+                key: 'statusOfToday',
+                render: p => p && <ProgressLabel progress={p}/>
+            }
+        ];
+    }
 
     toggleOnlyFinishedTasks = checked => {
         this.setState({
