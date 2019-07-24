@@ -1,10 +1,11 @@
 import React from 'react'
 import { Link } from "react-router-dom";
-import {Table, Button, Switch} from "antd";
-import {request} from "../../../../request";
+import {Table, Button, Switch, Input} from "antd";
+import {collectRequestParams, request} from "../../../../request";
 import { connect } from "react-redux";
 import {TaskDetailDrawerLink} from "./detail";
 import {ProgressLabel} from "./progress";
+const {Search} = Input;
 
 @connect(
     state => ({
@@ -16,22 +17,32 @@ class TaskList extends React.Component<{loginAccount?}> {
     state = {
         loading: true,
         tasks: null,
-        onlyFinishedTasks: false
+        onlyFinishedTasks: false,
+        startDoneTime: undefined,
+        endDoneTime: undefined,
+        searchKey: undefined
     };
 
     componentDidMount(): void {
         this.fetchTasks();
     }
 
-    fetchTasks() {
+    getQueryParams() {
         let {loginAccount: {name}} = this.props;
-        let params = ["owner=" + name];
-        if (this.state.onlyFinishedTasks) {
-            params.push("done=true")
-        }
+        let {onlyFinishedTasks, startDoneTime, endDoneTime, searchKey} = this.state;
 
+        return collectRequestParams({
+            done: onlyFinishedTasks,
+            startDoneTime,
+            endDoneTime,
+            key: searchKey,
+            owner: name,
+        }).join('&')
+    }
+
+    fetchTasks() {
         request({
-            url: "/api/supplier/develop/tasks?" + params.join("&")
+            url: "/api/supplier/develop/tasks?" + this.getQueryParams()
         }, tasks => {
             this.setState({
                 loading: false,
@@ -98,11 +109,24 @@ class TaskList extends React.Component<{loginAccount?}> {
         ];
     }
 
+    executeQuery(criteria) {
+        this.setState({
+            ...criteria,
+            loading: true
+        }, () => this.fetchTasks());
+    }
+
     toggleOnlyFinishedTasks = checked => {
         this.setState({
             loading: true,
             onlyFinishedTasks: checked
         }, () => this.fetchTasks());
+    };
+
+    setSearchKey = value => {
+        this.executeQuery({
+            searchKey: value
+        })
     };
 
     render() {
@@ -122,6 +146,7 @@ class TaskList extends React.Component<{loginAccount?}> {
                         />
                         仅已完成任务
                     </label>
+                    <Search placeholder="按关键字查询" onSearch={this.setSearchKey} style={{ width: "12em", marginLeft: "1em" }} />
                 </div>
                 <Table
                     loading={!this.state.tasks || this.state.loading}
