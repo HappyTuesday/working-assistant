@@ -22,7 +22,7 @@ public class TaskQueryCriteria {
             clauses.add((t, cq, cb) -> cb.equal(t.get("done"), done));
         }
         if (owner != null) {
-            clauses.add((t, cq, cb) -> cb.equal(t.get("owner.name"), owner));
+            clauses.add((t, cq, cb) -> cb.equal(t.get("owner").get("name"), owner));
         }
         if (startDoneTime != null) {
             clauses.add((t, cq, cb) -> cb.greaterThanOrEqualTo(t.get("doneTime"), new Date(startDoneTime)));
