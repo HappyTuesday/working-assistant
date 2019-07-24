@@ -98,6 +98,7 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                     title: '完成时间',
                     dataIndex: 'doneTime',
                     key: 'doneTime',
+                    width: '12em',
                     sorter: (x, y) => x.doneTime - y.doneTime,
                     render: doneTime => dateFormat(doneTime, "yyyy/mm/dd HH:MM")
                 }
@@ -109,6 +110,7 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                 title: "序号",
                 dataIndex: 'id',
                 key: 'id',
+                width: '4em',
                 render: (id, record, index) => (
                     <span>
                         <TaskDetailDrawerLink
@@ -122,26 +124,31 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                 title: '负责人',
                 dataIndex: 'owner.name',
                 key: 'owner.name',
+                width: '6em',
                 ...this.getFilter(tasks, t => t.owner.name)
             }, {
                 title: '供应商全称',
                 dataIndex: 'supplierName',
                 key: 'supplierName',
+                width: '10em',
                 ...this.getFilter(tasks, t => t.supplierName)
             }, {
                 title: '供应商类型',
                 dataIndex: 'supplierType',
                 key: 'supplierType',
+                width: '8em',
                 ...this.getFilter(tasks, t => t.supplierType)
             }, {
                 title: '品类',
                 dataIndex: 'subtype',
                 key: 'subtype',
+                width: '8em',
                 ...this.getFilter(tasks, t => t.subtype)
             }, {
                 title: '任务类型',
                 dataIndex: 'type',
                 key: 'type',
+                width: '8em',
                 ...this.getFilter(tasks, t => t.type)
             }, {
                 title: '备注',
@@ -162,6 +169,7 @@ class TaskManageList extends React.Component<{loginAccount?}> {
             {
                 title: '操作',
                 dataIndex: 'operation',
+                width: '10em',
                 render: (text, record) => (
                     <div>
                         <Link to={"/supplier/develop/tasks/detail/" + record.id}>
@@ -201,7 +209,12 @@ class TaskManageList extends React.Component<{loginAccount?}> {
     }
 
     toggleOnlyFinishedTasks = checked => {
-        this.executeQuery({onlyFinishedTasks: checked});
+        this.executeQuery({
+            onlyFinishedTasks: checked,
+            ...(checked ? {} : {
+                startDoneTime: undefined, endDoneTime: undefined
+            })
+        });
     };
 
     setDoneTimeMonth = (time: Moment) => {
@@ -209,10 +222,17 @@ class TaskManageList extends React.Component<{loginAccount?}> {
     };
 
     monthToDoneTime(time: Moment) {
-        let month = moment([time.year(), time.month()]);
-        return {
-            startDoneTime: month.toDate().getTime(),
-            endDoneTime: month.add(1, "month").toDate().getTime()
+        if (time) {
+            let month = moment([time.year(), time.month()]);
+            return {
+                startDoneTime: month.toDate().getTime(),
+                endDoneTime: month.add(1, "month").toDate().getTime()
+            }
+        } else {
+            return {
+                startDoneTime: undefined,
+                endDoneTime: undefined
+            }
         }
     }
 
@@ -258,7 +278,7 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                     rowKey="id"
                     dataSource={this.state.tasks}
                     columns={this.columns}
-                    pagination={{pageSize: 100}}
+                    pagination={{pageSize: 20}}
                 />
             </div>
         )

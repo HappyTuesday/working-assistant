@@ -45,6 +45,7 @@ class TaskList extends React.Component<{loginAccount?}> {
             title: "序号",
             dataIndex: 'id',
             key: 'id',
+            width: '4em',
             render: (id, record, index) => (
                 <span>
                     <TaskDetailDrawerLink
@@ -58,19 +59,23 @@ class TaskList extends React.Component<{loginAccount?}> {
         {
             title: '供应商全称',
             dataIndex: 'supplierName',
-            key: 'supplierName'
+            key: 'supplierName',
+            width: '10em',
         }, {
             title: '供应商类型',
             dataIndex: 'supplierType',
-            key: 'supplierType'
+            key: 'supplierType',
+            width: '8em',
         }, {
             title: '品类',
             dataIndex: 'subtype',
-            key: 'subtype'
+            key: 'subtype',
+            width: '8em',
         }, {
             title: '任务类型',
             dataIndex: 'type',
-            key: 'type'
+            key: 'type',
+            width: '8em',
         }, {
             title: '备注',
             dataIndex: 'description',
@@ -119,7 +124,7 @@ class TaskList extends React.Component<{loginAccount?}> {
                     rowKey="id"
                     dataSource={this.state.tasks}
                     columns={this.columns}
-                    pagination={{pageSize: 100}}
+                    pagination={{pageSize: 20}}
                 />
             </div>
         )

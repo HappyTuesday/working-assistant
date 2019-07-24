@@ -10,6 +10,6 @@ const SUPPLIER_TYPES = [
 
 export const SUPPLIER_TYPE_SELECT = (
     <Select>
-        {SUPPLIER_TYPES.map(v => <Select.Option value={v}>{v}</Select.Option>)}
+        {SUPPLIER_TYPES.map(v => <Select.Option value={v} key={v}>{v}</Select.Option>)}
     </Select>
 );

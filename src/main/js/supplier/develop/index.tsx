@@ -50,7 +50,7 @@ class NotFound extends React.Component<{location?}> {
 class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, history?}> {
 
     state = {
-        collapsed: false,
+        collapsed: true,
     };
 
     logout() {

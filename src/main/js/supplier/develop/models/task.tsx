@@ -15,7 +15,7 @@ const TASK_TYPES = [
 
 export const TASK_TYPE_SELECT = (
     <Select>
-        {TASK_TYPES.map(v => <Select.Option value={v}>{v}</Select.Option>)}
+        {TASK_TYPES.map(v => <Select.Option value={v} key={v}>{v}</Select.Option>)}
     </Select>
 );
 
@@ -43,6 +43,6 @@ const TASK_SUBTYPES = [
 
 export const TASK_SUBTYPE_SELECT = (
     <Select>
-        {TASK_SUBTYPES.map(v => <Select.Option value={v}>{v}</Select.Option>)}
+        {TASK_SUBTYPES.map(v => <Select.Option value={v} key={v}>{v}</Select.Option>)}
     </Select>
 );

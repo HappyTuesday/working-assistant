@@ -83,7 +83,7 @@ class UserList extends React.Component {
                     rowKey="id"
                     dataSource={this.state.users}
                     columns={this.columns}
-                    pagination={{pageSize: 100}}
+                    pagination={{pageSize: 20}}
                 />
             </div>
         )
