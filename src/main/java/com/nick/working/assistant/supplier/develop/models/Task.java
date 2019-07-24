@@ -32,7 +32,7 @@ public class Task {
         this.type = dto.getType();
         this.subtype = dto.getSubtype();
         this.description = dto.getDescription();
-        this.taskStatus = dto.getTaskStatus();
+        this.taskStatus = Enum.valueOf(TaskStatus.class, dto.getTaskStatus());
         this.transitTime = dto.getTransitTime();
 
         if (!progresses.isEmpty()) {
@@ -69,7 +69,7 @@ public class Task {
         dto.setType(type);
         dto.setSubtype(subtype);
         dto.setDescription(description);
-        dto.setTaskStatus(taskStatus);
+        dto.setTaskStatus(taskStatus.name());
         dto.setTransitTime(transitTime);
         return dto;
     }

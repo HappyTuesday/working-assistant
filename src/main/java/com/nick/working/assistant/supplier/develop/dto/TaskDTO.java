@@ -20,6 +20,6 @@ public class TaskDTO {
     private String type;
     private String subtype;
     private String description;
-    private TaskStatus taskStatus;
+    private String taskStatus;
     private Date transitTime;
 }

@@ -93,7 +93,7 @@ public class TaskController {
 
         TaskDTO dto = task.toDTO();
         dto.setOwner(getUserDTO(task.getOwner().getName()));
-        dto.setTaskStatus(TaskStatus.ACTIVE);
+        dto.setTaskStatus(TaskStatus.ACTIVE.name());
         dto.setTransitTime(new Date());
 
         return repository.save(dto).getId();
@@ -118,8 +118,8 @@ public class TaskController {
         dto.setOwner(getUserDTO(task.getOwner().getName()));
 
         if (task.getTaskStatus() != null) {
-            if (task.getTaskStatus() != dto.getTaskStatus()) {
-                dto.setTaskStatus(task.getTaskStatus());
+            if (!task.getTaskStatus().name().equals(dto.getTaskStatus())) {
+                dto.setTaskStatus(task.getTaskStatus().name());
                 dto.setTransitTime(new Date());
             }
         }
@@ -132,8 +132,8 @@ public class TaskController {
         Optional<TaskDTO> result = repository.findById(taskId);
         if (result.isPresent()) {
             TaskDTO task = result.get();
-            if (task.getTaskStatus() != TaskStatus.ACTIVE) {
-                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "task already done");
+            if (!TaskStatus.ACTIVE.name().equals(task.getTaskStatus())) {
+                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "task is not active");
             }
             ProgressDTO progress = new ProgressDTO();
             progress.setTaskId(taskId);
@@ -165,8 +165,8 @@ public class TaskController {
         Optional<TaskDTO> result = repository.findById(taskId);
         if (result.isPresent()) {
             TaskDTO dto = result.get();
-            if (dto.getTaskStatus() != target) {
-                dto.setTaskStatus(target);
+            if (!target.name().equals(dto.getTaskStatus())) {
+                dto.setTaskStatus(target.name());
                 dto.setTransitTime(new Date());
                 repository.save(dto);
             }
