@@ -1,6 +1,5 @@
 package com.nick.working.assistant.supplier.develop.dto;
 
-import com.nick.working.assistant.supplier.develop.models.TaskStatus;
 import lombok.Data;
 
 import javax.persistence.*;

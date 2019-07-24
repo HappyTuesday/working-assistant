@@ -20,7 +20,7 @@ public class TaskQueryCriteria {
     public Specification<TaskDTO> toWhereClause() {
         List<Specification<TaskDTO>> clauses = new ArrayList<>();
         if (taskStatus != null) {
-            clauses.add((t, cq, cb) -> cb.equal(t.get("taskStatus"), taskStatus));
+            clauses.add((t, cq, cb) -> cb.equal(t.get("taskStatus"), taskStatus.name()));
         }
         if (owner != null) {
             clauses.add((t, cq, cb) -> cb.equal(t.get("owner").get("name"), owner));
