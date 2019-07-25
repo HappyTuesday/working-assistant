@@ -118,25 +118,25 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                 title: '供应商全称',
                 dataIndex: 'supplierName',
                 key: 'supplierName',
-                width: '10em',
+                width: '12em',
                 ...this.getFilter(tasks, t => t.supplierName)
             }, {
-                title: '供应商类型',
+                title: '类别',
                 dataIndex: 'supplierType',
                 key: 'supplierType',
-                width: '8em',
+                width: '6em',
                 ...this.getFilter(tasks, t => t.supplierType)
             }, {
                 title: '品类',
                 dataIndex: 'subtype',
                 key: 'subtype',
-                width: '8em',
+                width: '7em',
                 ...this.getFilter(tasks, t => t.subtype)
             }, {
                 title: '任务类型',
                 dataIndex: 'type',
                 key: 'type',
-                width: '8em',
+                width: '9em',
                 ...this.getFilter(tasks, t => t.type)
             }, {
                 title: '备注',
@@ -156,21 +156,20 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                 title: showTransitTimeTitle(taskStatus),
                 dataIndex: 'transitTime',
                 key: 'transitTime',
-                width: '12em',
-                sorter: (x, y) => x.transitTime - y.transitTime,
-                render: transitTime => dateFormat(transitTime, "yyyy/mm/dd HH:MM")
+                width: '6em',
+                sorter: (x, y) => new Date(x.transitTime).getTime() - new Date(y.transitTime).getTime(),
+                render: transitTime => dateFormat(transitTime, "yyyy/mm/dd")
             }, {
                 title: '操作',
                 dataIndex: 'operation',
-                width: taskStatus === TaskStatus.ACTIVE ? '12em' : '10em',
+                width: '7em',
                 render: (text, record) => (
                     <div>
-                        <Link to={"/supplier/develop/tasks/detail/" + record.id}>
-                            <Icon type="menu-unfold" title="查看详情"/>
-                        </Link>
+                        {/*<Link to={"/supplier/develop/tasks/detail/" + record.id}>*/}
+                            {/*<Icon type="menu-unfold" title="查看详情"/>*/}
+                        {/*</Link>*/}
                         {taskStatus === TaskStatus.ACTIVE && (
                             <React.Fragment>
-                                <Divider type="vertical"/>
                                 <Popconfirm title="确认要完成此任务吗?" onConfirm={() => this.transitTask(record.id, "finish")}>
                                     <a href="javascript:" title="完成此任务">
                                         <Icon type="check"/>
@@ -182,9 +181,9 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                                         <Icon type="close"/>
                                     </a>
                                 </Popconfirm>
+                                <Divider type="vertical"/>
                             </React.Fragment>
                         )}
-                        <Divider type="vertical"/>
                         <Link to={"/supplier/develop/tasks/edit/" + record.id}>
                             <Icon type="edit" title="编辑此任务"/>
                         </Link>
