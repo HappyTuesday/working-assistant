@@ -69,7 +69,9 @@ public class Task {
         dto.setType(type);
         dto.setSubtype(subtype);
         dto.setDescription(description);
-        dto.setTaskStatus(taskStatus.name());
+        if (taskStatus != null) {
+            dto.setTaskStatus(taskStatus.name());
+        }
         dto.setTransitTime(transitTime);
         return dto;
     }
