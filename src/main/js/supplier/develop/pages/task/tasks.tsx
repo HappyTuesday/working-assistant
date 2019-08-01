@@ -120,10 +120,10 @@ class TaskList extends React.Component<{loginAccount?}> {
                 key: 'statusOfYesterday',
                 render: p => p && <ProgressLabel progress={p}/>
             }, {
-                title: '当前进度',
+                title: '今日进度',
                 dataIndex: 'statusOfToday',
                 key: 'statusOfToday',
-                render: p => p && <ProgressLabel progress={p}/>
+                render: p => p && <ProgressLabel progress={p} onlyToday={true}/>
             }, {
                 title: showTransitTimeTitle(taskStatus),
                 dataIndex: 'transitTime',
