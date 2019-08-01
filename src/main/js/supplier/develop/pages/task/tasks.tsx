@@ -4,7 +4,7 @@ import {Table, Button, Input, Icon} from "antd";
 import {collectRequestParams, request} from "../../../../request";
 import { connect } from "react-redux";
 import {TaskDetailDrawerLink} from "./detail";
-import {ProgressLabel} from "./progress";
+import {MissingProgress, ProgressLabel} from "./progress";
 import {
     renderTaskStatusRadio,
     renderTransitTimeRanger,
@@ -123,7 +123,7 @@ class TaskList extends React.Component<{loginAccount?}> {
                 title: '今日进度',
                 dataIndex: 'statusOfToday',
                 key: 'statusOfToday',
-                render: p => p && <ProgressLabel progress={p} onlyToday={true}/>
+                render: p => p ? <ProgressLabel progress={p} onlyToday={true}/> : <MissingProgress/>
             }, {
                 title: showTransitTimeTitle(taskStatus),
                 dataIndex: 'transitTime',
