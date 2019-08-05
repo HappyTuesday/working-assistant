@@ -295,18 +295,15 @@ class TaskList extends React.Component<{loginAccount?}> {
                                       </Link>
                                   </div>
                                   <div>
-                                      <span>
-                                          <label style={{fontWeight: "bold"}}>昨日进度：</label>
-                                          {task.statusOfYesterday && <ProgressLabel progress={task.statusOfYesterday}/>}
-                                      </span>
-                                      <Divider type="vertical"/>
-                                      <span>
-                                          <label style={{fontWeight: "bold"}}>今日进度：</label>
-                                          {task.statusOfToday ?
-                                              <ProgressLabel progress={task.statusOfToday} onlyToday={true}/> :
-                                              <MissingProgress/>
-                                          }
-                                      </span>
+                                      <label style={{fontWeight: "bold"}}>昨日进度：</label>
+                                      {task.statusOfYesterday && <ProgressLabel progress={task.statusOfYesterday}/>}
+                                  </div>
+                                  <div>
+                                      <label style={{fontWeight: "bold"}}>今日进度：</label>
+                                      {task.statusOfToday ?
+                                          <ProgressLabel progress={task.statusOfToday} onlyToday={true}/> :
+                                          <MissingProgress/>
+                                      }
                                   </div>
                               </div>
                           </List.Item>

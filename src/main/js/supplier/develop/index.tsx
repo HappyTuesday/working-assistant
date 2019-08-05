@@ -130,13 +130,13 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
                 <Route path="/supplier/develop" key="1" exact component={TaskListPage}/>,
                 <Route path="/supplier/develop/tasks" key="2" exact component={TaskListPage}/>,
                 <Route path="/supplier/develop/tasks/list" key="3" component={TaskListPage}/>,
-                <Route path="/supplier/develop/tasks/create" key="6" component={CreateTaskPage}/>
+                <Route path="/supplier/develop/tasks/detail/:taskId" key="4" component={TaskDetailPage}/>,
+                <Route path="/supplier/develop/tasks/create" key="5" component={CreateTaskPage}/>
             );
 
             if (loginAccount.manager) {
                 routes.push(
-                    <Route path="/supplier/develop/tasks/manage" key="4" component={TaskManageListPage}/>,
-                    <Route path="/supplier/develop/tasks/detail/:taskId" key="5" component={TaskDetailPage}/>,
+                    <Route path="/supplier/develop/tasks/manage" key="6" component={TaskManageListPage}/>,
                     <Route path="/supplier/develop/tasks/edit/:taskId" key="7" component={EditTaskPage}/>,
                     <Route path="/supplier/develop/users/list" key="8" component={UserListPage}/>,
                     <Route path="/supplier/develop/users/create" key="9" component={CreateUserPage}/>,
@@ -153,11 +153,19 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
 
         if (isMobile) {
             return (
-                <Content>
-                    <div style={{background: '#fff', padding: 24, minHeight: 580}}>
-                        <Switch>{routes}</Switch>
-                    </div>
-                </Content>
+                <div>
+                    <PageHeader
+                        onBack={() => window.history.back()}
+                        title="Working Assistant"
+                        subTitle="Supplier Develop - Enjoy your life!"
+                        extra={[userInfo]}
+                    />
+                    <Content>
+                        <div style={{background: '#fff', padding: 24, minHeight: 800}}>
+                            <Switch>{routes}</Switch>
+                        </div>
+                    </Content>
+                </div>
             )
         }
 
