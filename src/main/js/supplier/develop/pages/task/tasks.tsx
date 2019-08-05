@@ -299,7 +299,7 @@ class TaskList extends React.Component<{loginAccount?}> {
                                           <label style={{fontWeight: "bold"}}>昨日进度：</label>
                                           {task.statusOfYesterday && <ProgressLabel progress={task.statusOfYesterday}/>}
                                       </span>
-                                      <Divider type="horizontal"/>
+                                      <Divider type="vertical"/>
                                       <span>
                                           <label style={{fontWeight: "bold"}}>今日进度：</label>
                                           {task.statusOfToday ?
