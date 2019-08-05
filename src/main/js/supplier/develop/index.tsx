@@ -155,9 +155,7 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
             return (
                 <div>
                     <PageHeader
-                        onBack={() => window.history.back()}
                         title="Working Assistant"
-                        subTitle="Supplier Develop - Enjoy your life!"
                         extra={[userInfo]}
                     />
                     <Content>
