@@ -1,13 +1,13 @@
 import React from 'react'
 import { Link } from "react-router-dom";
-import {Table, Button, Input, Icon} from "antd";
+import {Table, Button, Input, Icon, List, Descriptions, Divider} from "antd";
 import {collectRequestParams, request} from "../../../../request";
 import { connect } from "react-redux";
 import {TaskDetailDrawerLink} from "./detail";
 import {MissingProgress, ProgressLabel} from "./progress";
 import {
     renderTaskStatusRadio,
-    renderTransitTimeRanger,
+    renderTransitTimeRanger, showTaskStatus,
     showTransitTimeTitle, TaskStatus
 } from "../../models/task";
 const {Search} = Input;
@@ -15,13 +15,14 @@ import dateFormat from "dateformat"
 import {RangePickerValue} from "antd/lib/date-picker/interface";
 import {unique} from "../../../../lambda";
 import moment from 'moment';
+import Media from "react-media";
 
 @connect(
     state => ({
         loginAccount: state.accounts.loginAccount
     })
 )
-class TaskList extends React.Component<{loginAccount?}> {
+class TaskTable extends React.Component<{loginAccount?}> {
 
     state = {
         tasks: undefined,
@@ -210,11 +211,118 @@ class TaskList extends React.Component<{loginAccount?}> {
     }
 }
 
-export class TaskListPage extends React.Component {
+@connect(
+    state => ({
+        loginAccount: state.accounts.loginAccount
+    })
+)
+class TaskList extends React.Component<{loginAccount?}> {
+
+    state = {
+        tasks: undefined,
+        loading: true,
+        taskStatus: TaskStatus.ACTIVE
+    };
+
+    componentDidMount(): void {
+        this.fetchTasks();
+    }
+
+    getQueryParams() {
+        let {loginAccount: {name}} = this.props;
+        let {taskStatus} = this.state;
+
+        return collectRequestParams({
+            owner: name,
+            taskStatus
+        }).join('&')
+    }
+
+    fetchTasks() {
+        request({
+            url: "/api/supplier/develop/tasks?" + this.getQueryParams()
+        }, tasks => {
+            this.setState({
+                loading: false,
+                tasks
+            })
+        })
+    }
+
+    executeQuery(criteria) {
+        this.setState({
+            ...criteria,
+            loading: true
+        }, () => this.fetchTasks());
+    }
+
+    setTaskStatus = e => {
+        this.executeQuery({
+            taskStatus: e.target.value
+        });
+    };
+
     render() {
+        let {tasks, taskStatus} = this.state;
+
         return (
-            <TaskList/>
+            <div>
+                <h2>我的任务列表</h2>
+                <div>
+                    <Link to="/supplier/develop/tasks/create">
+                        <Button type="primary" style={{ marginBottom: 16 }} icon="plus">
+                            添加新任务
+                        </Button>
+                    </Link>
+
+                    {renderTaskStatusRadio({
+                        defaultValue: taskStatus,
+                        onChange: this.setTaskStatus,
+                        style: {marginLeft: "1em"}
+                    })}
+                </div>
+                <List loading={!tasks || this.state.loading}
+                      dataSource={tasks}
+                      renderItem={ (task: any) =>
+                          <List.Item key={task.id}>
+                              <div>
+                                  <div>
+                                      <Link to={"/supplier/develop/tasks/detail/" + task.id}>
+                                      <span style={{fontWeight: "bold", fontSize: "1.2em"}}>
+                                          {"#" + (tasks.indexOf(task) + 1)}
+                                      </span>
+                                          <span style={{marginLeft: "1em"}}>{task.supplierName}</span>
+                                      </Link>
+                                  </div>
+                                  <div>
+                                      <span>
+                                          <label style={{fontWeight: "bold"}}>昨日进度：</label>
+                                          {task.statusOfYesterday && <ProgressLabel progress={task.statusOfYesterday}/>}
+                                      </span>
+                                      <Divider type="horizontal"/>
+                                      <span>
+                                          <label style={{fontWeight: "bold"}}>今日进度：</label>
+                                          {task.statusOfToday ?
+                                              <ProgressLabel progress={task.statusOfToday} onlyToday={true}/> :
+                                              <MissingProgress/>
+                                          }
+                                      </span>
+                                  </div>
+                              </div>
+                          </List.Item>
+                      }
+                      />
+            </div>
         )
     }
 }
 
+export class TaskListPage extends React.Component {
+    render() {
+        return (
+            <Media query="(max-width: 599px)">
+                {isMobile => isMobile ? <TaskList/> : <TaskTable/>}
+            </Media>
+        )
+    }
+}

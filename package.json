@@ -26,7 +26,8 @@
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
     "redux": "^4.0.4",
-    "dateformat": "^3.0.3"
+    "dateformat": "^3.0.3",
+    "react-media": "^1.9.2"
   },
   "scripts": {
     "build": "webpack --config webpack.prod.js",

@@ -21,6 +21,7 @@ import {CreateUserPage} from "./pages/user/create";
 import {EditUserPage} from "./pages/user/edit";
 import {TaskManageListPage} from "./pages/task/manage";
 import {TaskDetailPage} from "./pages/task/detail";
+import Media from "react-media";
 const { Header, Content, Sider } = Layout;
 
 @withRouter
@@ -47,7 +48,7 @@ class NotFound extends React.Component<{location?}> {
     {updateAccount}
 )
 @withRouter
-class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, history?}> {
+class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, history?, isMobile?}> {
 
     state = {
         collapsed: true,
@@ -77,7 +78,7 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
     }
 
     render() {
-        let {loginAccount} = this.props;
+        let {loginAccount, isMobile} = this.props;
 
         let menuItems = [];
 
@@ -150,6 +151,16 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
 
         routes.push(<Route key="12" component={NotFound}/>);
 
+        if (isMobile) {
+            return (
+                <Content>
+                    <div style={{background: '#fff', padding: 24, minHeight: 580}}>
+                        <Switch>{routes}</Switch>
+                    </div>
+                </Content>
+            )
+        }
+
         return (
             <Layout style={{minHeight: '100vh'}}>
                 <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
@@ -167,9 +178,7 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
                     </Header>
                     <Content style={{padding: '0 50px'}}>
                         <div style={{background: '#fff', padding: 24, minHeight: 580}}>
-                            <Switch>
-                                {routes}
-                            </Switch>
+                            <Switch>{routes}</Switch>
                         </div>
                     </Content>
                     <Footer style={{textAlign: 'center'}}>Working Assistant ©2019 Created by Nick</Footer>
@@ -184,7 +193,9 @@ export default class Index extends React.Component {
         return (
             <Provider store={store}>
                 <Router>
-                    <BasicLayout/>
+                    <Media query="(max-width: 599px)">
+                        {isMobile => <BasicLayout isMobile={isMobile} />}
+                    </Media>
                 </Router>
             </Provider>
         )

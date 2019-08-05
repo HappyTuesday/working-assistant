@@ -123,11 +123,9 @@ class TaskDetail extends React.Component<{taskId, size?}> {
             form = <WrappedProgressForm taskId={task.id} onCommitted={() => this.fetchTaskDetail()}/>
         }
 
-        let {size} = this.props;
-
         return (
             <div>
-                <Descriptions column={size === 'small' ? 1 : 3} layout="horizontal">
+                <Descriptions column={1} layout="horizontal">
                     <Descriptions.Item label="负责人">{task.owner.name}</Descriptions.Item>
                     <Descriptions.Item label="供应商全称">{task.supplierName}</Descriptions.Item>
                     <Descriptions.Item label="供应商类型">{task.supplierType}</Descriptions.Item>
