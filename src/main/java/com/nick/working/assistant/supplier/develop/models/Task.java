@@ -18,7 +18,7 @@ public class Task {
     private String subtype;
     private String description;
     private TaskStatus taskStatus;
-    private Date transitTime;
+    private long transitTime;
     private Progress statusOfYesterday;
     private Progress statusOfToday;
 
@@ -33,7 +33,7 @@ public class Task {
         this.subtype = dto.getSubtype();
         this.description = dto.getDescription();
         this.taskStatus = Enum.valueOf(TaskStatus.class, dto.getTaskStatus());
-        this.transitTime = dto.getTransitTime();
+        this.transitTime = dto.getTransitTime().getTime();
 
         if (!progresses.isEmpty()) {
             ProgressDTO p = progresses.get(0);
@@ -72,7 +72,7 @@ public class Task {
         if (taskStatus != null) {
             dto.setTaskStatus(taskStatus.name());
         }
-        dto.setTransitTime(transitTime);
+        dto.setTransitTime(new Date(transitTime));
         return dto;
     }
 }

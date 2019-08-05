@@ -12,7 +12,7 @@ public class Progress {
     private String content;
     private String comment;
     private User author;
-    private Date timestamp;
+    private long timestamp;
 
     public Progress() {}
 
@@ -22,6 +22,6 @@ public class Progress {
         this.content = dto.getContent();
         this.comment = dto.getComment();
         this.author = new User(dto.getAuthor());
-        this.timestamp = dto.getTimestamp();
+        this.timestamp = dto.getTimestamp().getTime();
     }
 }

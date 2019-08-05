@@ -15,6 +15,7 @@ import {
 } from "../../models/task";
 import dateFormat from "dateformat"
 import {RangePickerValue} from "antd/lib/date-picker/interface";
+import moment from "moment";
 
 const {Search} = Input;
 
@@ -157,7 +158,7 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                 dataIndex: 'transitTime',
                 key: 'transitTime',
                 width: '6em',
-                sorter: (x, y) => new Date(x.transitTime).getTime() - new Date(y.transitTime).getTime(),
+                sorter: (x, y) => moment(x.transitTime).date() - moment(y.transitTime).date(),
                 render: transitTime => dateFormat(transitTime, "yyyy/mm/dd")
             }, {
                 title: '操作',
