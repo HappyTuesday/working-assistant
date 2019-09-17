@@ -3,6 +3,7 @@ package com.nick.working.assistant.supplier.develop.models;
 import com.nick.working.assistant.supplier.develop.dto.ProgressDTO;
 import lombok.Data;
 
+import java.util.Calendar;
 import java.util.Date;
 
 @Data
@@ -23,5 +24,25 @@ public class Progress {
         this.comment = dto.getComment();
         this.author = new User(dto.getAuthor());
         this.timestamp = dto.getTimestamp().getTime();
+    }
+
+    public String getDetailText() {
+        if (comment == null || comment.isEmpty()) {
+            return content;
+        }
+        return String.format("%s - %s", content, comment);
+    }
+
+    public boolean belongsToToday() {
+        return today().getTime() <= timestamp;
+    }
+
+    public static Date today() {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        return c.getTime();
     }
 }

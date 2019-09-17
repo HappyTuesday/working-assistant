@@ -4,7 +4,7 @@ import {request} from "../../../../request";
 import { connect } from "react-redux";
 import {FormComponentProps} from "antd/lib/form";
 import dateFormat from "dateformat"
-import {showTaskStatus, showTransitTimeTitle, TaskStatus} from "../../models/task";
+import {showTaskStatus, showTransitTimeTitle, TaskStatus, PROGRESS_TYPE_SELECT} from "../../models/task";
 
 const { Step } = Steps;
 
@@ -53,13 +53,20 @@ class ProgressForm extends React.Component<FormComponentProps & {taskId?, loginA
                         rules: [
                             {
                                 required: true,
-                                message: 'Please input the content of the progress!',
+                                message: '请填写进度！',
                             },
                         ],
-                    })(<Input />)}
+                    })(PROGRESS_TYPE_SELECT)}
                 </Form.Item>
                 <Form.Item label="备注">
-                    {getFieldDecorator('comment')(<Input.TextArea />)}
+                    {getFieldDecorator('comment', {
+                        rules: [
+                            {
+                                required: true,
+                                message: '请填写备注信息！',
+                            },
+                        ],
+                    })(<Input.TextArea />)}
                 </Form.Item>
                 <Form.Item>
                     <Button type="primary" htmlType="submit" icon="save">

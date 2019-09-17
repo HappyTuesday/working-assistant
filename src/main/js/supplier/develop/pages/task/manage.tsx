@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {Button, Divider, Icon, Input, Popconfirm, Table} from "antd";
 import {collectRequestParams, request} from "../../../../request";
 import {TaskDetailDrawerLink} from "./detail";
-import {ProgressLabel} from "./progress";
+import {MissingProgress, ProgressLabel} from "./progress";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {unique} from "../../../../lambda";
@@ -152,7 +152,7 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                 title: '当前进度',
                 dataIndex: 'statusOfToday',
                 key: 'statusOfToday',
-                render: p => p && <ProgressLabel progress={p}/>
+                render: p => p ? <ProgressLabel progress={p} onlyToday={true}/> : <MissingProgress/>
             }, {
                 title: showTransitTimeTitle(taskStatus),
                 dataIndex: 'transitTime',

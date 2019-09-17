@@ -8,13 +8,13 @@ import {RadioGroupProps} from "antd/lib/radio";
 const TASK_TYPES = [
     "新引进供应商",
     "新增标的物",
+    "新增区域",
     "一次性采购",
-    "不合作供应商重新引进",
-    "降税",
     "补合同16%税率",
     "补合同13%税率",
     "补合同10%税率",
     "补合同9%税率",
+    "补合同6%税率",
     "补合同3%税率",
 ];
 
@@ -121,3 +121,24 @@ export function renderTaskStatusRadio(props: RadioGroupProps = {}) {
         </Radio.Group>
     )
 }
+
+const PROGRESS_TYPES = [
+    "1.询价中",
+    "2.供应商注册流程中",
+    "3.比价/资质流程中",
+    "4.上会/出决议流程中",
+    "5.标的物匹配流程中",
+    "6.合同起草流程中",
+    "7.合同审批流程中",
+    "8.供应商盖章流程中",
+    "9.合同邮寄流程中",
+    "10.价格审批单流程中",
+    "11.合同用印流程中",
+    "12.已完成"
+];
+
+export const PROGRESS_TYPE_SELECT = (
+    <Select>
+        {PROGRESS_TYPES.map(v => <Select.Option value={v} key={v}>{v}</Select.Option>)}
+    </Select>
+);
