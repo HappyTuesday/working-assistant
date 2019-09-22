@@ -5,9 +5,9 @@ import {collectRequestParams, request} from "../../../../request";
 import {TaskDetailDrawerLink} from "./detail";
 import {MissingProgress, ProgressLabel} from "./progress";
 import {connect} from "react-redux";
-import {withRouter} from "react-router";
-import {unique} from "../../../../lambda";
+import {onlyDate, unique} from "../../../../lambda";
 import {
+    renderTargetDatePicker,
     renderTaskStatusRadio,
     renderTransitTimeRanger,
     showTransitTimeTitle,
@@ -32,6 +32,7 @@ class TaskManageList extends React.Component<{loginAccount?}> {
         taskStatus: TaskStatus.ACTIVE,
         startTransitTime: undefined,
         endTransitTime: undefined,
+        targetDate: undefined,
         searchKey: undefined
     };
 
@@ -40,12 +41,13 @@ class TaskManageList extends React.Component<{loginAccount?}> {
     }
 
     getQueryParams() {
-        let {taskStatus, startTransitTime, endTransitTime, searchKey} = this.state;
+        let {taskStatus, startTransitTime, endTransitTime, targetDate, searchKey} = this.state;
 
         return collectRequestParams({
             taskStatus,
             startTransitTime,
             endTransitTime,
+            targetDate,
             searchKey
         }).join('&')
     }
@@ -152,7 +154,7 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                 title: '当前进度',
                 dataIndex: 'statusOfToday',
                 key: 'statusOfToday',
-                render: p => p ? <ProgressLabel progress={p} onlyToday={true}/> : <MissingProgress/>
+                render: p => <ProgressLabel progress={p}/>
             }, {
                 title: showTransitTimeTitle(taskStatus),
                 dataIndex: 'transitTime',
@@ -215,8 +217,14 @@ class TaskManageList extends React.Component<{loginAccount?}> {
 
     setTransitTimeRangeOfDay = ([start, end]: RangePickerValue) => {
         this.executeQuery({
-            startTransitTime: start ? start.toDate().getTime() : undefined,
-            endTransitTime: end ? end.add(1, 'day').toDate().getTime() : undefined,
+            startTransitTime: start ? onlyDate(start).toDate().getTime() : undefined,
+            endTransitTime: end ? onlyDate(end).add(1, 'day').toDate().getTime() : undefined,
+        });
+    };
+
+    setTargetDate = (date: moment.Moment) => {
+        this.executeQuery({
+            targetDate: date ? onlyDate(date).toDate().getTime() : undefined
         });
     };
 
@@ -251,6 +259,11 @@ class TaskManageList extends React.Component<{loginAccount?}> {
 
                     {renderTransitTimeRanger({
                         onChange: this.setTransitTimeRangeOfDay,
+                        style: {marginLeft: "1em"}
+                    })}
+
+                    {renderTargetDatePicker({
+                        onChange: this.setTargetDate,
                         style: {marginLeft: "1em"}
                     })}
 

@@ -36,19 +36,21 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> findAll(TaskQueryCriteria criteria) {
+    public List<Task> findAll(TaskQueryCriteria criteria, Long targetDate) {
         Iterable<TaskDTO> iterable = repository.findAll(criteria.toWhereClause());
 
         List<Task> list = new ArrayList<>();
         for (TaskDTO dto : iterable) {
-            list.add(new Task(dto, progressRepository.findAllByTaskIdOrderByTimestampDesc(dto.getId())));
+            List<ProgressDTO> ps = progressRepository.findAllByTaskIdOrderByTimestampDesc(dto.getId());
+            list.add(new Task(dto, ps, targetDate));
         }
         return list;
     }
 
     @GetMapping("excel")
-    public ModelAndView exportAllToExcel(TaskQueryCriteria criteria) {
-        return new ModelAndView("tasksExcelView", Collections.singletonMap("tasks", findAll(criteria)));
+    public ModelAndView exportAllToExcel(TaskQueryCriteria criteria, Long targetDate) {
+        return new ModelAndView("tasksExcelView",
+            Collections.singletonMap("tasks", findAll(criteria, targetDate)));
     }
 
     @GetMapping("{id}")

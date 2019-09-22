@@ -4,16 +4,16 @@ import {Table, Button, Input, Icon, List, Descriptions, Divider} from "antd";
 import {collectRequestParams, request} from "../../../../request";
 import { connect } from "react-redux";
 import {TaskDetailDrawerLink} from "./detail";
-import {MissingProgress, ProgressLabel} from "./progress";
+import {ProgressLabel} from "./progress";
 import {
     renderTaskStatusRadio,
-    renderTransitTimeRanger, showTaskStatus,
+    renderTransitTimeRanger,
     showTransitTimeTitle, TaskStatus
 } from "../../models/task";
 const {Search} = Input;
 import dateFormat from "dateformat"
 import {RangePickerValue} from "antd/lib/date-picker/interface";
-import {unique} from "../../../../lambda";
+import {onlyDate, unique} from "../../../../lambda";
 import moment from 'moment';
 import Media from "react-media";
 
@@ -125,7 +125,7 @@ class TaskTable extends React.Component<{loginAccount?}> {
                 title: '今日进度',
                 dataIndex: 'statusOfToday',
                 key: 'statusOfToday',
-                render: p => p ? <ProgressLabel progress={p} onlyToday={true}/> : <MissingProgress/>
+                render: p => <ProgressLabel progress={p}/>
             }, {
                 title: showTransitTimeTitle(taskStatus),
                 dataIndex: 'transitTime',
@@ -152,8 +152,8 @@ class TaskTable extends React.Component<{loginAccount?}> {
 
     setTransitTimeRangeOfDay = ([start, end]: RangePickerValue) => {
         this.executeQuery({
-            startTransitTime: start ? start.toDate().getTime() : undefined,
-            endTransitTime: end ? end.add(1, 'day').toDate().getTime() : undefined,
+            startTransitTime: start ? onlyDate(start).toDate().getTime() : undefined,
+            endTransitTime: end ? onlyDate(end).add(1, 'day').toDate().getTime() : undefined,
         });
     };
 
@@ -300,10 +300,7 @@ class TaskList extends React.Component<{loginAccount?}> {
                                   </div>
                                   <div>
                                       <label style={{fontWeight: "bold"}}>今日进度：</label>
-                                      {task.statusOfToday ?
-                                          <ProgressLabel progress={task.statusOfToday} onlyToday={true}/> :
-                                          <MissingProgress/>
-                                      }
+                                      <ProgressLabel progress={task.statusOfToday}/>
                                   </div>
                               </div>
                           </List.Item>

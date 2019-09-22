@@ -25,6 +25,14 @@ public class Task {
     public Task() {}
 
     public Task(TaskDTO dto, List<ProgressDTO> progresses) {
+        this(dto, progresses, getToday());
+    }
+
+    public Task(TaskDTO dto, List<ProgressDTO> progresses, Long targetDate) {
+        this(dto, progresses, targetDate != null && targetDate != 0 ? new Date(targetDate) : getToday());
+    }
+
+    public Task(TaskDTO dto, List<ProgressDTO> progresses, Date targetDate) {
         this.id = dto.getId();
         this.owner = new User(dto.getOwner());
         this.supplierName = dto.getSupplierName();
@@ -36,19 +44,24 @@ public class Task {
         this.transitTime = dto.getTransitTime().getTime();
 
         if (!progresses.isEmpty()) {
-            ProgressDTO p = progresses.get(0);
-            this.statusOfToday = new Progress(p);
-            Date today = getToday();
-            for (ProgressDTO q : progresses) {
-                if (q.getTimestamp().before(today)) {
-                    this.statusOfYesterday = new Progress(q);
+            for (ProgressDTO p : progresses) {
+                if (p.getTimestamp().getTime() < targetDate.getTime()) {
+                    this.statusOfYesterday = new Progress(p);
+                    break;
+                }
+            }
+
+            for (ProgressDTO p : progresses) {
+                if (targetDate.getTime() <= p.getTimestamp().getTime() &&
+                    p.getTimestamp().getTime() < targetDate.getTime() + 24 * 3600 * 1000) {
+                    this.statusOfToday = new Progress(p);
                     break;
                 }
             }
         }
     }
 
-    private Date getToday() {
+    private static Date getToday() {
         Calendar now = Calendar.getInstance();
         Calendar today = new Calendar.Builder()
             .set(Calendar.YEAR, now.get(Calendar.YEAR))

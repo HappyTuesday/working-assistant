@@ -1,12 +1,10 @@
 import React from "react"
-import moment from 'moment';
 
-export class ProgressLabel extends React.Component<{progress, onlyToday?}> {
+export class ProgressLabel extends React.Component<{progress}> {
     render() {
-        let {progress: p, onlyToday} = this.props;
+        let {progress: p} = this.props;
 
-        let today = moment().startOf('day');
-        if (onlyToday && today.isSameOrAfter(p.timestamp)) {
+        if (!p) {
             return <MissingProgress/>
         }
 

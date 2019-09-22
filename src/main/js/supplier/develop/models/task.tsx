@@ -1,6 +1,6 @@
 import React from "react"
 import {DatePicker, Select, Radio} from "antd";
-import {RangePickerProps} from "antd/es/date-picker/interface";
+import {DatePickerProps, RangePickerProps} from "antd/es/date-picker/interface";
 const { RangePicker } = DatePicker;
 import moment from 'moment';
 import {RadioGroupProps} from "antd/lib/radio";
@@ -108,6 +108,16 @@ export function renderTransitTimeRanger(props: RangePickerProps) {
                          ],
                      }}
                      {...props}
+        />
+    )
+}
+
+export function renderTargetDatePicker(props: DatePickerProps) {
+    return (
+        <DatePicker format="YYYY/MM/DD"
+                    showTime={false}
+                    placeholder="选择进度截止日期"
+                    {...props}
         />
     )
 }
