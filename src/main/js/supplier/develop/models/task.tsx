@@ -173,7 +173,7 @@ export function getProgressTypeSelect(taskType: string) {
     )
 }
 
-export class TaskBriefList extends React.Component<{loading: boolean, tasks: []}> {
+export class TaskBriefList extends React.Component<{loading: boolean, tasks: any[]}> {
     render() {
         let {loading, tasks} = this.props;
         return (
