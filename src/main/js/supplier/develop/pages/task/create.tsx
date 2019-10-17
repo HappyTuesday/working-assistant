@@ -23,7 +23,13 @@ class CreateForm extends React.Component<any> {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                this.createTask({...values, owner: {name: values.owner.value || this.props.loginAccount.name}});
+                this.createTask({
+                    ...values,
+                    owner: {
+                        name: values.owner.value || this.props.loginAccount.name
+                    }
+                });
+                this.props.form.resetFields();
             }
         });
     };
@@ -70,14 +76,13 @@ class CreateForm extends React.Component<any> {
             <Form {...formItemLayout} onSubmit={this.handleSubmit}>
                 <Form.Item label="任务负责人">
                     {getFieldDecorator('owner', {
-                        initialValue: loginAccount.manager ? "" : loginAccount.name,
                         rules: [
                             {
                                 required: true,
                                 message: 'Please input the owner!',
                             },
                         ],
-                    })(loginAccount.manager ? <UserSelect/> : <Input readOnly={true}/>)}
+                    })(loginAccount.manager ? <UserSelect/> : <Input readOnly={true} defaultValue={loginAccount.name}/>)}
                 </Form.Item>
                 <Form.Item label="供应商全称">
                     {getFieldDecorator('supplierName', {

@@ -1,9 +1,11 @@
 import React from "react"
-import {DatePicker, Select, Radio} from "antd";
+import {DatePicker, Select, Radio, List} from "antd";
 import {DatePickerProps, RangePickerProps} from "antd/es/date-picker/interface";
 const { RangePicker } = DatePicker;
 import moment from 'moment';
 import {RadioGroupProps} from "antd/lib/radio";
+import {ProgressLabel} from "../pages/task/progress";
+import {Link} from "react-router-dom";
 
 const TASK_TYPES = [
     "新引进供应商",
@@ -147,8 +149,59 @@ const PROGRESS_TYPES = [
     "12.已完成"
 ];
 
-export const PROGRESS_TYPE_SELECT = (
-    <Select>
-        {PROGRESS_TYPES.map(v => <Select.Option value={v} key={v}>{v}</Select.Option>)}
-    </Select>
-);
+const PROGRESS_TYPE_ONE_TIME = [
+    "1.询价中",
+    "2.比价流程中",
+    "3.发起请示单，请示采购",
+    "4.付款申请中",
+    "5.已采购物流配送中",
+    "6.已到货，完成"
+];
+
+export function getProgressTypeSelect(taskType: string) {
+    let types;
+    if (taskType === '一次性采购') {
+        types = PROGRESS_TYPE_ONE_TIME;
+    } else {
+        types = PROGRESS_TYPES;
+    }
+
+    return (
+        <Select>
+            {types.map(v => <Select.Option value={v} key={v}>{v}</Select.Option>)}
+        </Select>
+    )
+}
+
+export class TaskBriefList extends React.Component<{loading: boolean, tasks: []}> {
+    render() {
+        let {loading, tasks} = this.props;
+        return (
+            <List loading={loading || !tasks}
+                  dataSource={tasks}
+                  renderItem={ (task: any) =>
+                      <List.Item key={task.id}>
+                          <div>
+                              <div>
+                                  <Link to={"/supplier/develop/tasks/detail/" + task.id}>
+                                      <span style={{fontWeight: "bold", fontSize: "1.2em"}}>
+                                          {"#" + (tasks.indexOf(task) + 1)}
+                                      </span>
+                                      <span style={{marginLeft: "1em"}}>{task.supplierName}</span>
+                                  </Link>
+                              </div>
+                              <div>
+                                  <label style={{fontWeight: "bold"}}>昨日进度：</label>
+                                  {task.statusOfYesterday && <ProgressLabel progress={task.statusOfYesterday}/>}
+                              </div>
+                              <div>
+                                  <label style={{fontWeight: "bold"}}>今日进度：</label>
+                                  <ProgressLabel progress={task.statusOfToday}/>
+                              </div>
+                          </div>
+                      </List.Item>
+                  }
+            />
+        )
+    }
+}

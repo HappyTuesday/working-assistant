@@ -19,7 +19,7 @@ import {User} from "./models/user";
 import {UserListPage} from "./pages/user";
 import {CreateUserPage} from "./pages/user/create";
 import {EditUserPage} from "./pages/user/edit";
-import {TaskManageListPage} from "./pages/task/manage";
+import {TaskManagePage} from "./pages/task/manage";
 import {TaskDetailPage} from "./pages/task/detail";
 import Media from "react-media";
 const { Header, Content, Sider } = Layout;
@@ -83,21 +83,23 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
         let menuItems = [];
 
         if (loginAccount) {
+            if (loginAccount.manager) {
+                menuItems.push(this.renderMenuItem({
+                    key: "1",
+                    title: "任务管理",
+                    link: "/supplier/develop/tasks/manage",
+                    icon: "database"
+                }));
+            }
+
             menuItems.push(this.renderMenuItem({
-                key: "1",
+                key: "2",
                 title: "我的任务",
                 link: "/supplier/develop/tasks/list",
                 icon: "schedule"
             }));
 
             if (loginAccount.manager) {
-                menuItems.push(this.renderMenuItem({
-                    key: "2",
-                    title: "任务管理",
-                    link: "/supplier/develop/tasks/manage",
-                    icon: "database"
-                }));
-
                 menuItems.push(this.renderMenuItem({
                     key: "3",
                     title: "用户管理",
@@ -127,17 +129,19 @@ class BasicLayout extends React.Component<{loginAccount?: User, updateAccount?, 
         let routes = [];
         if (loginAccount) {
             routes.push(
-                <Route path="/supplier/develop" key="1" exact component={TaskListPage}/>,
+                <Route path="/supplier/develop" key="1" exact component={
+                    loginAccount.manager ? TaskManagePage : TaskListPage
+                }/>,
                 <Route path="/supplier/develop/tasks" key="2" exact component={TaskListPage}/>,
                 <Route path="/supplier/develop/tasks/list" key="3" component={TaskListPage}/>,
                 <Route path="/supplier/develop/tasks/detail/:taskId" key="4" component={TaskDetailPage}/>,
-                <Route path="/supplier/develop/tasks/create" key="5" component={CreateTaskPage}/>
+                <Route path="/supplier/develop/tasks/create" key="5" component={CreateTaskPage}/>,
+                <Route path="/supplier/develop/tasks/edit/:taskId" key="6" component={EditTaskPage}/>
             );
 
             if (loginAccount.manager) {
                 routes.push(
-                    <Route path="/supplier/develop/tasks/manage" key="6" component={TaskManageListPage}/>,
-                    <Route path="/supplier/develop/tasks/edit/:taskId" key="7" component={EditTaskPage}/>,
+                    <Route path="/supplier/develop/tasks/manage" key="7" component={TaskManagePage}/>,
                     <Route path="/supplier/develop/users/list" key="8" component={UserListPage}/>,
                     <Route path="/supplier/develop/users/create" key="9" component={CreateUserPage}/>,
                     <Route path="/supplier/develop/users/edit/:userId" key="10" component={EditUserPage}/>

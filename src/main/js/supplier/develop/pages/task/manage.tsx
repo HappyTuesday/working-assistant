@@ -1,21 +1,22 @@
 import React from 'react'
 import {Link} from "react-router-dom";
-import {Button, Divider, Icon, Input, Popconfirm, Table} from "antd";
+import {Button, Divider, Icon, Input, List, Popconfirm, Table} from "antd";
 import {collectRequestParams, request} from "../../../../request";
 import {TaskDetailDrawerLink} from "./detail";
-import {MissingProgress, ProgressLabel} from "./progress";
+import {ProgressLabel} from "./progress";
 import {connect} from "react-redux";
 import {onlyDate, unique} from "../../../../lambda";
 import {
     renderTargetDatePicker,
     renderTaskStatusRadio,
     renderTransitTimeRanger,
-    showTransitTimeTitle,
+    showTransitTimeTitle, TaskBriefList,
     TaskStatus
 } from "../../models/task";
 import dateFormat from "dateformat"
 import {RangePickerValue} from "antd/lib/date-picker/interface";
 import moment from "moment";
+import Media from "react-media";
 
 const {Search} = Input;
 
@@ -24,7 +25,7 @@ const {Search} = Input;
         loginAccount: state.accounts.loginAccount
     })
 )
-class TaskManageList extends React.Component<{loginAccount?}> {
+class TaskManageTable extends React.Component<{loginAccount?}> {
 
     state = {
         tasks: undefined,
@@ -287,10 +288,127 @@ class TaskManageList extends React.Component<{loginAccount?}> {
     }
 }
 
-export class TaskManageListPage extends React.Component {
+
+@connect(
+    state => ({
+        loginAccount: state.accounts.loginAccount
+    })
+)
+class TaskManageList extends React.Component<{loginAccount?}> {
+
+    state = {
+        tasks: undefined,
+        loading: true,
+        taskStatus: TaskStatus.ACTIVE
+    };
+
+    componentDidMount(): void {
+        this.fetchTasks();
+    }
+
+    getQueryParams() {
+        let {loginAccount: {name}} = this.props;
+        let {taskStatus} = this.state;
+
+        return collectRequestParams({
+            owner: name,
+            taskStatus
+        }).join('&')
+    }
+
+    fetchTasks() {
+        request({
+            url: "/api/supplier/develop/tasks?" + this.getQueryParams()
+        }, tasks => {
+            this.setState({
+                loading: false,
+                tasks
+            })
+        })
+    }
+
+    executeQuery(criteria) {
+        this.setState({
+            ...criteria,
+            loading: true
+        }, () => this.fetchTasks());
+    }
+
+    setTaskStatus = e => {
+        this.executeQuery({
+            taskStatus: e.target.value
+        });
+    };
+
+    setTransitTimeRangeOfDay = ([start, end]: RangePickerValue) => {
+        this.executeQuery({
+            startTransitTime: start ? onlyDate(start).toDate().getTime() : undefined,
+            endTransitTime: end ? onlyDate(end).add(1, 'day').toDate().getTime() : undefined,
+        });
+    };
+
+    setTargetDate = (date: moment.Moment) => {
+        this.executeQuery({
+            targetDate: date ? onlyDate(date).toDate().getTime() : undefined
+        });
+    };
+
+    setSearchKey = value => {
+        this.executeQuery({
+            searchKey: value
+        })
+    };
+
+    render() {
+        let {tasks, taskStatus} = this.state;
+
+        return (
+            <div>
+                <h2>任务管理</h2>
+                <p>
+                    <Link to="/supplier/develop/tasks/create">
+                        <Button type="primary" style={{ marginBottom: 16 }} icon="plus">
+                            添加新任务
+                        </Button>
+                    </Link>
+
+                    {renderTaskStatusRadio({
+                        defaultValue: taskStatus,
+                        onChange: this.setTaskStatus,
+                        style: {marginLeft: "1em"}
+                    })}
+                </p>
+
+                <p>
+                    <Search placeholder="按关键字查询"
+                            onSearch={this.setSearchKey}
+                            style={{ width: "12em"}} />
+
+                    {renderTargetDatePicker({
+                        onChange: this.setTargetDate,
+                        style: {marginLeft: "1em"}
+                    })}
+                </p>
+
+                <p>
+                    <a href={"/api/supplier/develop/tasks/excel?" + this.getQueryParams()}
+                       title="导出"
+                       download>
+                        <Icon type="export" /> 导出到Excel
+                    </a>
+                </p>
+                <TaskBriefList loading={this.state.loading} tasks={tasks}/>
+            </div>
+        )
+    }
+}
+
+export class TaskManagePage extends React.Component {
     render() {
         return (
-            <TaskManageList/>
+            <Media query="(max-width: 599px)">
+                {isMobile => isMobile ? <TaskManageList/> : <TaskManageTable/>}
+            </Media>
         )
     }
 }

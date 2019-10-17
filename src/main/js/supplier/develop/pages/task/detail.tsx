@@ -1,10 +1,11 @@
 import React from "react";
-import {Button, Descriptions, Divider, Drawer, Form, Input, message, Skeleton, Steps} from "antd";
+import {Link} from "react-router-dom";
+import {Button, Descriptions, Divider, Drawer, Form, Icon, Input, message, Skeleton, Steps} from "antd";
 import {request} from "../../../../request";
 import { connect } from "react-redux";
 import {FormComponentProps} from "antd/lib/form";
 import dateFormat from "dateformat"
-import {showTaskStatus, showTransitTimeTitle, TaskStatus, PROGRESS_TYPE_SELECT} from "../../models/task";
+import {showTaskStatus, showTransitTimeTitle, TaskStatus, getProgressTypeSelect} from "../../models/task";
 
 const { Step } = Steps;
 
@@ -13,13 +14,14 @@ const { Step } = Steps;
         loginAccount: state.accounts.loginAccount
     })
 )
-class ProgressForm extends React.Component<FormComponentProps & {taskId?, loginAccount?, onCommitted?}> {
+class ProgressForm extends React.Component<FormComponentProps & {taskId?, taskType?, loginAccount?, onCommitted?}> {
 
     handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 this.updateProcess(values.content, values.comment);
+                this.props.form.resetFields();
             }
         })
     };
@@ -46,6 +48,7 @@ class ProgressForm extends React.Component<FormComponentProps & {taskId?, loginA
 
     render() {
         const { getFieldDecorator } = this.props.form;
+        const {taskType} = this.props;
         return (
             <Form layout="vertical" hideRequiredMark onSubmit={this.handleSubmit} title="Update Progress">
                 <Form.Item label="进度">
@@ -56,7 +59,7 @@ class ProgressForm extends React.Component<FormComponentProps & {taskId?, loginA
                                 message: '请填写进度！',
                             },
                         ],
-                    })(PROGRESS_TYPE_SELECT)}
+                    })(getProgressTypeSelect(taskType))}
                 </Form.Item>
                 <Form.Item label="备注">
                     {getFieldDecorator('comment', {
@@ -127,7 +130,9 @@ class TaskDetail extends React.Component<{taskId, size?}> {
 
         let form;
         if (task.taskStatus === TaskStatus.ACTIVE) {
-            form = <WrappedProgressForm taskId={task.id} onCommitted={() => this.fetchTaskDetail()}/>
+            form = <WrappedProgressForm taskId={task.id}
+                                        taskType={task.type}
+                                        onCommitted={() => this.fetchTaskDetail()}/>
         }
 
         return (
@@ -163,10 +168,18 @@ class TaskDetail extends React.Component<{taskId, size?}> {
 
 export class TaskDetailPage extends React.Component<{match}> {
     render() {
+        let taskId = this.props.match.params.taskId;
         return (
             <div>
-                <h2>任务详情</h2>
-                <TaskDetail taskId={this.props.match.params.taskId}/>
+                <h2>
+                    任务详情
+                    <span style={{marginLeft: "1em"}}>
+                        <Link to={"/supplier/develop/tasks/edit/" + taskId}>
+                        <Icon type="edit" title="编辑任务"/>
+                    </Link>
+                    </span>
+                </h2>
+                <TaskDetail taskId={taskId}/>
             </div>
         )
     }
@@ -194,6 +207,7 @@ export class TaskDetailDrawer extends React.Component<{renderTrigger: (showDrawe
     };
 
     render() {
+        let taskId = this.props.taskId;
         return (
             <div>
                 {this.props.renderTrigger(this.showDrawer)}
@@ -202,7 +216,7 @@ export class TaskDetailDrawer extends React.Component<{renderTrigger: (showDrawe
                     width={450}
                     onClose={this.onClose}
                     visible={this.state.visible}>
-                    <TaskDetail taskId={this.props.taskId} size="small"/>
+                    <TaskDetail taskId={taskId} size="small"/>
                 </Drawer>
             </div>
         );

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from "react-router-dom";
-import {Table, Button, Input, Icon, List, Descriptions, Divider} from "antd";
+import {Table, Button, Input, Icon, List, Descriptions, Divider, Popconfirm} from "antd";
 import {collectRequestParams, request} from "../../../../request";
 import { connect } from "react-redux";
 import {TaskDetailDrawerLink} from "./detail";
@@ -8,7 +8,7 @@ import {ProgressLabel} from "./progress";
 import {
     renderTaskStatusRadio,
     renderTransitTimeRanger,
-    showTransitTimeTitle, TaskStatus
+    showTransitTimeTitle, TaskBriefList, TaskStatus
 } from "../../models/task";
 const {Search} = Input;
 import dateFormat from "dateformat"
@@ -133,6 +133,15 @@ class TaskTable extends React.Component<{loginAccount?}> {
                 width: '6em',
                 sorter: (x, y) => moment(x.transitTime).date() - moment(y.transitTime).date(),
                 render: transitTime => dateFormat(transitTime, "yyyy/mm/dd")
+            }, {
+                title: '操作',
+                dataIndex: 'operation',
+                width: '7em',
+                render: (text, record) => (
+                    <Link to={"/supplier/develop/tasks/edit/" + record.id}>
+                        <Icon type="edit" title="编辑此任务"/>
+                    </Link>
+                )
             }
         ];
     }
@@ -281,31 +290,7 @@ class TaskList extends React.Component<{loginAccount?}> {
                         style: {marginLeft: "1em"}
                     })}
                 </div>
-                <List loading={!tasks || this.state.loading}
-                      dataSource={tasks}
-                      renderItem={ (task: any) =>
-                          <List.Item key={task.id}>
-                              <div>
-                                  <div>
-                                      <Link to={"/supplier/develop/tasks/detail/" + task.id}>
-                                      <span style={{fontWeight: "bold", fontSize: "1.2em"}}>
-                                          {"#" + (tasks.indexOf(task) + 1)}
-                                      </span>
-                                          <span style={{marginLeft: "1em"}}>{task.supplierName}</span>
-                                      </Link>
-                                  </div>
-                                  <div>
-                                      <label style={{fontWeight: "bold"}}>昨日进度：</label>
-                                      {task.statusOfYesterday && <ProgressLabel progress={task.statusOfYesterday}/>}
-                                  </div>
-                                  <div>
-                                      <label style={{fontWeight: "bold"}}>今日进度：</label>
-                                      <ProgressLabel progress={task.statusOfToday}/>
-                                  </div>
-                              </div>
-                          </List.Item>
-                      }
-                      />
+                <TaskBriefList loading={this.state.loading} tasks={tasks}/>
             </div>
         )
     }
