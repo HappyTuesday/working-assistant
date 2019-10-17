@@ -203,6 +203,7 @@ class TaskTable extends React.Component<{loginAccount?}> {
                     <a href={"/api/supplier/develop/tasks/excel?" + this.getQueryParams()}
                        style={{marginLeft: "1em"}}
                        title="导出"
+                       target="_blank"
                        download>
                         <Icon type="export" /> 导出到Excel
                     </a>

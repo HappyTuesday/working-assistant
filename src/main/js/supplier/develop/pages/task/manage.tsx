@@ -393,6 +393,7 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                 <p>
                     <a href={"/api/supplier/develop/tasks/excel?" + this.getQueryParams()}
                        title="导出"
+                       target="_blank"
                        download="开发进度.xlsx">
                         <Icon type="export" /> 导出到Excel
                     </a>
