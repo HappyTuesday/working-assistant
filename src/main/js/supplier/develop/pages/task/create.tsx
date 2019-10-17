@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from "react-router-dom";
 import {request} from "../../../../request";
 import { connect } from "react-redux";
 
@@ -82,7 +81,7 @@ class CreateForm extends React.Component<any> {
                                 message: 'Please input the owner!',
                             },
                         ],
-                    })(loginAccount.manager ? <UserSelect/> : <Input readOnly={true} defaultValue={loginAccount.name}/>)}
+                    })(loginAccount.manager ? <UserSelect/> : <Input readOnly={true} value={loginAccount.name}/>)}
                 </Form.Item>
                 <Form.Item label="供应商全称">
                     {getFieldDecorator('supplierName', {

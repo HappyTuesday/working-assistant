@@ -299,7 +299,9 @@ class TaskManageList extends React.Component<{loginAccount?}> {
     state = {
         tasks: undefined,
         loading: true,
-        taskStatus: TaskStatus.ACTIVE
+        taskStatus: TaskStatus.ACTIVE,
+        targetDate: undefined,
+        searchKey: undefined
     };
 
     componentDidMount(): void {
@@ -307,12 +309,12 @@ class TaskManageList extends React.Component<{loginAccount?}> {
     }
 
     getQueryParams() {
-        let {loginAccount: {name}} = this.props;
-        let {taskStatus} = this.state;
+        let {taskStatus, targetDate, searchKey} = this.state;
 
         return collectRequestParams({
-            owner: name,
-            taskStatus
+            taskStatus,
+            targetDate,
+            searchKey
         }).join('&')
     }
 
@@ -378,22 +380,20 @@ class TaskManageList extends React.Component<{loginAccount?}> {
                         style: {marginLeft: "1em"}
                     })}
                 </p>
-
                 <p>
                     <Search placeholder="按关键字查询"
                             onSearch={this.setSearchKey}
                             style={{ width: "12em"}} />
-
+                </p>
+                <p>
                     {renderTargetDatePicker({
-                        onChange: this.setTargetDate,
-                        style: {marginLeft: "1em"}
+                        onChange: this.setTargetDate
                     })}
                 </p>
-
                 <p>
                     <a href={"/api/supplier/develop/tasks/excel?" + this.getQueryParams()}
                        title="导出"
-                       download>
+                       download="开发进度.xlsx">
                         <Icon type="export" /> 导出到Excel
                     </a>
                 </p>
