@@ -204,7 +204,7 @@ class TaskTable extends React.Component<{loginAccount?}> {
                        style={{marginLeft: "1em"}}
                        title="导出"
                        target="_blank"
-                       download>
+                       download="开发进度.xlsx">
                         <Icon type="export" /> 导出到Excel
                     </a>
                 </div>
